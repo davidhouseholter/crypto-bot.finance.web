@@ -9,11 +9,10 @@ import signarReducer, { onUpdateOrderSignarState, onUpdateSignarState } from './
 import { HubConnectionBuilder, LogLevel, HttpTransportType } from "@microsoft/signalr";
 import { withCallbacks } from '../signalr/helpers'
 import signalMiddleware from '../signalr/signalr-middleware'
-// import { withCallbacks, signalMiddleware } from "redux-signalr";
 
 export const connection = new HubConnectionBuilder()
   .configureLogging(LogLevel.Error)
-  .withUrl('http://localhost:5550/hub/user', {
+  .withUrl('https://api.crypto-bot.finance/hub/user', {
     skipNegotiation: true,
     transport: HttpTransportType.WebSockets,
   })

@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel, HttpTransportType } from
 import { useDispatch, useSelector } from "react-redux";
 import { onUpdateSignarState } from '../reducers/signalr';
 
-const URL = process.env.HUB_ADDRESS ?? "http://localhost:5550/hub/user"; 
+const URL = process.env.HUB_ADDRESS ?? "https://api.crypto-bot.finance/hub/user"; 
 let options = {
   transport: HttpTransportType.ServerSentEvents,
   logging: LogLevel.Information,
