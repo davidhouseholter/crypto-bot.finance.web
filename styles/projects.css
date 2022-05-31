@@ -1,0 +1,89 @@
+.swiper{
+  height: 70vh;
+}
+
+/* 
+.swiper {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+  
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .swiper-slide {
+    width: 80%;
+  }
+  
+  .swiper-slide:nth-child(2n) {
+    width: 60%;
+  }
+  
+  .swiper-slide:nth-child(3n) {
+    width: 40%;
+  } */
+  
+/* 
+.image-container {
+    width: 50vw;
+    height: 50vh;
+    position: relative;
+
+  
+}
+.image-container   .image {
+  width: 100%;
+  height: 100%;
+  position: relative !important;
+  object-fit: cover; 
+  
+}
+.image-container {
+    width: 50vw;
+    height: 50vh;
+    position: relative;
+  }
+.image-container .image {
+    width: 100%;
+    height: 100%;
+    position: relative !important;
+    object-fit: cover; 
+}
+
+
+.custom-img {
+  object-fit: contain;
+  width: 100% !important;
+  position: relative !important;
+  height: unset !important;
+}
+
+.unset-img {
+  width: 100%;
+}
+.unset-img > div {
+  position: unset !important;
+} */
