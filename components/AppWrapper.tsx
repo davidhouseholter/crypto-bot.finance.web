@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import getUserInformation from "../pkg/services";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUseProfile } from "../pkg/services/userService";
 import { changeUserIdentityState } from "../pkg/redux/reducers/userIdentityState";
 import { changeUserProfileState } from "../pkg/redux/reducers/userProfileState";
+import { connection } from "../pkg/redux/store";
+import { HubConnectionState } from "@microsoft/signalr";
 
 const AppContext = createContext<any>({
   hasSession: false,
@@ -16,7 +18,9 @@ let check: any = null;
 
 export function AppWrapper({ children }: AppWrapperProps): JSX.Element {
   const dispatch = useDispatch();
- 
+  const userStoreIdentity = useSelector(
+    (state: any) => state.userIdentityMode.value
+  );
   const [userIdentity, setUserIdentity] = useState({
     hasSession: false,
     currentUser: null,
@@ -24,6 +28,27 @@ export function AppWrapper({ children }: AppWrapperProps): JSX.Element {
   });
   const [userProfile, setUserProfile] = useState<any>(null);
 
+  const canUseDOM = !!(
+    typeof window !== "undefined" &&
+    window.document &&
+    window.document.createElement
+  );
+  const connected = connection.state;
+  useEffect(() => {
+    // console.log(connected)
+    if (canUseDOM && userIdentity.hasSession) {
+      if (
+        connected !== HubConnectionState.Connected &&
+        connected !== HubConnectionState.Reconnecting &&
+        connected !== HubConnectionState.Connecting
+      ) {
+        connection
+          .start()
+          .then(() => console.log("Connection started"))
+          .catch((err) => console.error(err.toString()));
+      }
+    }
+  }, [canUseDOM, connected, userIdentity]);
   useEffect(() => {
     if (check == null) {
       check = false;
@@ -42,7 +67,13 @@ export function AppWrapper({ children }: AppWrapperProps): JSX.Element {
         dispatch(changeUserProfileState(profile));
       });
     }
-  }, [dispatch, setUserIdentity, setUserProfile]);
+    if (userStoreIdentity?.hasSession && !userProfile) {
+      getUseProfile().then((profile: any) => {
+        setUserProfile(profile);
+        dispatch(changeUserProfileState(profile));
+      });
+    }
+  }, [dispatch, setUserIdentity, setUserProfile, userProfile, userIdentity, userStoreIdentity]);
 
   return (
     <AppContext.Provider value={userIdentity}>{children}</AppContext.Provider>
