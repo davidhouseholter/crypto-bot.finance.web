@@ -10,17 +10,20 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter, NextRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 // Import render helpers
 //   import { Flow, ActionCard, CenterLink, MarginCard } from '../pkg'
 import { handleFlowError } from "../pkg/errors";
+import { changeUserIdentityState } from "../pkg/redux/reducers/userIdentityState";
 // Import the SDK
 import ory from "../pkg/sdk";
+import { getUseProfile } from "../pkg/services/userService";
 import { Values } from "./login";
 
 // Renders the registration page
 export function Registration() {
-
+  const dispatch = useDispatch();
       
   const filterNodes = (): Array<UiNode> => {
     
@@ -86,8 +89,6 @@ export function Registration() {
         }
         const parts = node.attributes.name.split('.');
         if (parts.length > 1) {
-            console.log(parts);
-            debugger
             if(parts[0] == 'traits') {
                 if(!bodyValue['traits']) {
                     bodyValue['traits'] ={};
@@ -111,7 +112,6 @@ export function Registration() {
       }
     })
 
-    console.log(bodyValue)
     bodyValue.method = "password"
     router
     // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
@@ -125,7 +125,12 @@ export function Registration() {
           //
           // You can do cool stuff here, like having access to the identity which just signed up:
           console.log("This is the user session: ", data, data.identity);
-
+          let sharedState = {
+            hasSession: true,
+            currentUser: data.identity,
+            lastCheck: true,
+          };
+          dispatch(changeUserIdentityState(sharedState));
           // For now however we just want to redirect home!
           return router.push(flow?.return_to || "/").then(() => {});
         })
@@ -264,8 +269,8 @@ export function Registration() {
 
                   <div className="mt-6">
                     <form className="space-y-6">
-                      {flow.ui.nodes.filter(node => (node.attributes as any).type != 'hidden'  && (node.attributes as any).type != 'submit').map((node) => (
-                        <>
+                      {flow.ui.nodes.filter(node => (node.attributes as any).type != 'hidden'  && (node.attributes as any).type != 'submit').map((node, id) => (
+                        <div key={id}>
                           <div>
                             <label
                               htmlFor={(node.attributes as any).name}
@@ -292,7 +297,7 @@ export function Registration() {
                                 ))}
                             </div>
                           </div>
-                        </>
+                        </div>
                       ))}
                       <div>
                         <button
