@@ -21,7 +21,6 @@ export function AppWrapper({ children }: AppWrapperProps): JSX.Element {
     hasSession: false,
     currentUser: null,
     lastCheck: null,
-    profileCheck: false
   });
   const [userProfile, setUserProfile] = useState<any>(null);
 
@@ -33,17 +32,11 @@ export function AppWrapper({ children }: AppWrapperProps): JSX.Element {
           hasSession: user == null ? false : true,
           currentUser: user,
           lastCheck: true,
-          profileCheck: false
         };
         setUserIdentity(sharedState as any);
         dispatch(changeUserIdentityState(sharedState));
       });
 
-     
-    }
-    if(userIdentity?.hasSession && userProfile == null && !userIdentity.profileCheck) {
-      setUserIdentity({...userIdentity, profileCheck:true});
-      dispatch(changeUserIdentityState(userIdentity));
       getUseProfile().then((profile: any) => {
         setUserProfile(profile);
         dispatch(changeUserProfileState(profile));
