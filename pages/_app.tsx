@@ -6,6 +6,7 @@ import Footer from "../components/layouts/Footer/footer";
 import { Provider, useSelector } from "react-redux";
 import { AppWrapper } from "../components/AppWrapper";
 import { store } from "../pkg/redux/store";
+import { ToastContainer } from "react-toastify";
 
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -40,6 +41,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           </AppWrapper>
         </Provider>
       </div>
+      <ToastContainer />
+
     </>
   );
 }

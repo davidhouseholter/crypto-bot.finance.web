@@ -1,24 +1,31 @@
 import { Dialog, Listbox, Transition } from "@headlessui/react";
-import { SelectorIcon, CheckIcon } from "@heroicons/react/outline";
+import {
+  SelectorIcon,
+  CheckIcon,
+  DotsVerticalIcon,
+} from "@heroicons/react/outline";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTradePairState } from "../../pkg/redux/reducers/tradePairs";
+import Notiflix, { Confirm } from "notiflix";
+
+import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
 import {
-  changeUserTradeBotsState,
-} from "../../pkg/redux/reducers/userTradeBots";
-import {
+  deleteUserTradeBot,
   getTradePairs,
   postStartUserTradeBot,
   putStartUserTradeBot,
   startUserTradeBot,
   stopUserTradeBot,
 } from "../../pkg/services/tradeBotServices";
+import { Popover } from "@headlessui/react";
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 export default function AddTradeBotModal({
   setShowModal,
   wallets,
   tradeWalletData,
-  editTradeBot
+  editTradeBot,
 }) {
   const open = true;
   function classNames(...classes) {
@@ -30,27 +37,32 @@ export default function AddTradeBotModal({
   );
 
   const [coins, setCoins] = useState<any[]>();
-  const [selected, setSelected] = useState(tradeWalletData ? tradeWalletData : wallets[0]);
-  const [newTradeBot, setNewTradeBot] = useState(editTradeBot ? editTradeBot : {
-    id: 0,
-    name: "",
-    active: true,
-    useUSD: true,
-    test: true,
-    coin: "",
-    funds: 0,
-    pair: "USD",
-    externalId: "",
-    tradeWalletId: selected.id,
-    targetSellPercent: 2.5,
-    peakVarianceDropSell: 0.5,
-    targetBuyPercent: 1.5,
-    peakVarianceRiseBuy: 0.5,
-    intervalId: 1,
-  });
-console.log(newTradeBot)
+  const [selected, setSelected] = useState(
+    tradeWalletData ? tradeWalletData : wallets[0]
+  );
+  const [newTradeBot, setNewTradeBot] = useState(
+    editTradeBot
+      ? editTradeBot
+      : {
+        id: 0,
+        name: "",
+        active: true,
+        useUSD: true,
+        test: true,
+        coin: "",
+        funds: 0,
+        pair: "USD",
+        externalId: "",
+        tradeWalletId: selected.id,
+        targetSellPercent: 2.5,
+        peakVarianceDropSell: 0.5,
+        targetBuyPercent: 1.5,
+        peakVarianceRiseBuy: 0.5,
+        intervalId: 1,
+      }
+  );
   const [selectedPair, setSelectedPair] = useState<any>();
-
+  const [loading, setLoading] = useState<boolean>(false);
   const coinPairs = useSelector(
     (state: any) => state.changeTradePairMode.value
   );
@@ -68,30 +80,132 @@ console.log(newTradeBot)
     }
   }, [coinPairs, dispatch]);
   const startNewTradeBot = async () => {
-    if(newTradeBot.id == 0) {
+    if (loading) {
+      return;
+    }
+    if (newTradeBot.coin == "") {
+      Notiflix.Report.failure("Error", "Trade Pair Not Valid", "Continue");
+      return;
+    }
+    if (newTradeBot.funds <= 0) {
+      Notiflix.Report.failure("Error", "Funds Not Valid", "Continue");
+      return;
+    }
+
+    setLoading(true);
+    if (newTradeBot.id == 0) {
       const result = await postStartUserTradeBot(newTradeBot);
-    
+
       dispatch(changeUserTradeBotsState([...userTradeBots, result.data]));
+      setLoading(false);
+
       setShowModal(false);
     } else {
       const result = await putStartUserTradeBot(newTradeBot);
-    
-      dispatch(changeUserTradeBotsState([...userTradeBots.filter(i => i.id != newTradeBot.id), result.data]));
+
+      dispatch(
+        changeUserTradeBotsState([
+          ...userTradeBots.filter((i) => i.id != newTradeBot.id),
+          result.data,
+        ])
+      );
+      setLoading(false);
+
       setShowModal(false);
     }
+    Notiflix.Loading.remove();
+  };
+  const stopBot = async (close: Function) => {
+    Confirm.show(
+      'Stop Bot',
+      'Do you want to stop the bot? It will still appear in the bot list.',
+      'Yes',
+      'No',
+      async () => {
+        try {
+          const result = await stopUserTradeBot(newTradeBot);
+          dispatch(
+            changeUserTradeBotsState([
+              ...userTradeBots.filter((i) => i.id != newTradeBot.id),
+              { ...newTradeBot, active: false },
+            ])
+          );
+          setShowModal(false);
+          close();
+        } catch {
+          Notify.failure('Request Failed');
+    
+        }
+      },
+      () => {
+
+      },
+      {
+      },
+    );
+    
 
   };
-const stopBot = async () => {
+  const startBot = async (close: Function) => {
+    Confirm.show(
+      'Start Bot',
+      'Do you want to start the bot?',
+      'Yes',
+      'No',
+      async () => {
+        try {
+          const result = await startUserTradeBot(newTradeBot);
+          dispatch(
+            changeUserTradeBotsState([
+              ...userTradeBots.filter((i) => i.id != newTradeBot.id),
+              { ...newTradeBot, active: true },
+            ])
+          );
+          setShowModal(false);
+          close();
+        } catch {
+          Notify.failure('Request Failed');
+    
+        }
+      },
+      () => {
 
-  const result = await stopUserTradeBot(newTradeBot);
-  dispatch(changeUserTradeBotsState([...userTradeBots.filter(i => i.id != newTradeBot.id), {...newTradeBot, active:false}]));
-  setShowModal(false);
-}
-const startBot = async () => {
-  const result = await startUserTradeBot(newTradeBot);
-  dispatch(changeUserTradeBotsState([...userTradeBots.filter(i => i.id != newTradeBot.id), {...newTradeBot, active:true}]));
-  setShowModal(false);
-}
+      },
+      {
+      },
+    );
+   
+
+  };
+
+  const deleteBot = async () => {
+    Confirm.show(
+      'Delete Bot?',
+      'Do you want to delete the bot? It will no longer appear in the app.',
+      'Yes',
+      'No',
+      async () => {
+        try {
+          const result = await deleteUserTradeBot(newTradeBot);
+          dispatch(
+            changeUserTradeBotsState([
+              ...userTradeBots.filter((i) => i.id != newTradeBot.id)
+            ])
+          );
+          setShowModal(false);
+          close();
+        } catch {
+          Notify.failure('Request Failed');
+
+        }
+      },
+      () => {
+
+      },
+      {
+      },
+    );
+  }
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -124,46 +238,104 @@ const startBot = async () => {
                   as="h3"
                   className="text-lg leading-6 font-medium text-gray-900"
                 >
-                  {newTradeBot.id <= 0 ? "Add" : "Edit"} Trade Bot
-                </Dialog.Title>
-                {/*body*/}
-                { newTradeBot.id <= 0 && (
-                <Listbox
-                  value={selected}
-                  onChange={(value: any) => {
-                    setSelected(value);
-                    setNewTradeBot({ ...newTradeBot, tradeWalletId: value.id });
-                  }}
-                >
-                  {({ open }) => (
-                    <>
-                      <Listbox.Label className="block text-sm font-medium text-gray-700">
-                        Wallet
-                      </Listbox.Label>
-                      <div className="mt-1 relative">
-                        <Listbox.Button className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                          <span className="block truncate">
-                            {selected.name}
-                          </span>
-                          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <SelectorIcon
-                              className="h-5 w-5 text-gray-400"
+                  <div className="w-full inline-flex justify-between">
+                    <div>{newTradeBot.id <= 0 ? "Add" : "Edit"} Trade Bot </div>
+                    {newTradeBot.id > 0 && (
+                      <div className="ml-3 inline-flex sm:ml-0">
+                        <Popover className="relative">
+                          <Popover.Button>
+                            {" "}
+                            <span className="sr-only">Open options menu</span>
+                            <DotsVerticalIcon
+                              className="h-5 w-5"
                               aria-hidden="true"
                             />
-                          </span>
-                        </Listbox.Button>
+                          </Popover.Button>
 
-                        <Transition
-                          show={open}
-                          as={Fragment}
-                          leave="transition ease-in duration-100"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                        >
-                          <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                            {wallets.map((person) => (
+                          <Popover.Panel className="absolute z-10">
+                            {({ close }) => (
+                              <>
+                                {newTradeBot.active && (
+                                  <button
+                                    type="button"
+                                    className="inline-flex mb-4 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
+                                    onClick={() => stopBot(close)}
+                                  >
+                                    Stop
+                                  </button>
+                                )}
+                                {!newTradeBot.active && (
+                                  <button
+                                    type="button"
+                                    disabled={loading}
+                                    className="inline-flex mb-4 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
+                                    onClick={() => startBot(close)}
+                                  >
+                                    Start
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  disabled={loading}
+                                  className="inline-flex mb-4 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
+                                  onClick={() => deleteBot()}
+                                >
+                                  delete
+                                </button>
+                              </>
+                            )}
+
+                          </Popover.Panel>
+                        </Popover>
+                      </div>
+
+                    )}
+                  </div>
+                </Dialog.Title>
+                {/*body*/}
+                {newTradeBot.id <= 0 && (
+                  <Listbox
+                    value={selected}
+                    onChange={(value: any) => {
+                      if (value != "new") {
+                        setSelected(value);
+                        setNewTradeBot({
+                          ...newTradeBot,
+                          tradeWalletId: value.id,
+                        });
+                      } else {
+                        setShowModal(false, true);
+                      }
+                    }}
+                  >
+                    {({ open }) => (
+                      <>
+                        <Listbox.Label className="block text-sm font-medium text-gray-700">
+                          Pool
+                        </Listbox.Label>
+                        <div className="mt-1 relative">
+                          <Listbox.Button className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <span className="block truncate">
+                              {selected.name}
+                            </span>
+                            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                              <SelectorIcon
+                                className="h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          </Listbox.Button>
+
+                          <Transition
+                            show={open}
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                               <Listbox.Option
-                                key={person.id}
+                                key={"new"}
                                 className={({ active }) =>
                                   classNames(
                                     active
@@ -172,7 +344,7 @@ const startBot = async () => {
                                     "cursor-default select-none relative py-2 pl-3 pr-9"
                                   )
                                 }
-                                value={person}
+                                value={"new"}
                               >
                                 {({ selected, active }) => (
                                   <>
@@ -184,7 +356,7 @@ const startBot = async () => {
                                         "block truncate"
                                       )}
                                     >
-                                      {person.name}
+                                      Add New Pool
                                     </span>
 
                                     {selected ? (
@@ -205,13 +377,57 @@ const startBot = async () => {
                                   </>
                                 )}
                               </Listbox.Option>
-                            ))}
-                          </Listbox.Options>
-                        </Transition>
-                      </div>
-                    </>
-                  )}
-                </Listbox> 
+                              {wallets.map((person) => (
+                                <Listbox.Option
+                                  key={person.id}
+                                  className={({ active }) =>
+                                    classNames(
+                                      active
+                                        ? "text-white bg-indigo-600"
+                                        : "text-gray-900",
+                                      "cursor-default select-none relative py-2 pl-3 pr-9"
+                                    )
+                                  }
+                                  value={person}
+                                >
+                                  {({ selected, active }) => (
+                                    <>
+                                      <span
+                                        className={classNames(
+                                          selected
+                                            ? "font-semibold"
+                                            : "font-normal",
+                                          "block truncate"
+                                        )}
+                                      >
+                                        {person.name}
+                                      </span>
+
+                                      {selected ? (
+                                        <span
+                                          className={classNames(
+                                            active
+                                              ? "text-white"
+                                              : "text-indigo-600",
+                                            "absolute inset-y-0 right-0 flex items-center pr-4"
+                                          )}
+                                        >
+                                          <CheckIcon
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                          />
+                                        </span>
+                                      ) : null}
+                                    </>
+                                  )}
+                                </Listbox.Option>
+                              ))}
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
+                      </>
+                    )}
+                  </Listbox>
                 )}
                 <div className="form-group mt-4">
                   <label
@@ -232,120 +448,6 @@ const startBot = async () => {
                     placeholder="Trade Bot Name"
                   />
                 </div>
-                { newTradeBot.id <= 0 && (
-                <div className="relative flex items-start mt-4 mb-4">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="tradeBotTest"
-                      aria-describedby="tradeBotTest-description"
-                      name="tradeBotTest"
-                      type="checkbox"
-                      checked={ newTradeBot.test}
-                      onChange={(e) => {console.log(e.target);setNewTradeBot({...newTradeBot, test: e.target.value == 'on'})}}
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="tradeBotTest"
-                      className="font-medium text-gray-700"
-                    >
-                      Test Bot
-                    </label>
-                    
-                  </div>
-                </div>)}
-             { newTradeBot.id <= 0 && (
-                  <div className="form-group" style={{minHeight: '46px'}}>
-                  <Listbox
-                    value={newTradeBot.coin}
-                    onChange={(value: any) => {
-                      setSelectedPair(value);
-                      setNewTradeBot({ ...newTradeBot, coin: value.currency });
-                    }}
-                  >
-                    {({ open }) => (
-                      <>
-                        <Listbox.Label className="block text-sm font-medium text-gray-700">
-                          Choose Pairs
-                        </Listbox.Label>
-                        <div className="mt-1 relative">
-                          <Listbox.Button className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <span className="block truncate">
-                              {selectedPair?.currency}
-                            </span>
-                            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                              <SelectorIcon
-                                className="h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                              />
-                            </span>
-                          </Listbox.Button>
-
-                          <Transition
-                            show={open}
-                            as={Fragment}
-                            leave="transition ease-in duration-100"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                          >
-                            <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                              {coins &&
-                                coins.map((coin) => (
-                                  <Listbox.Option
-                                    key={coin.id}
-                                    className={({ active }) =>
-                                      classNames(
-                                        active
-                                          ? "text-white bg-indigo-600"
-                                          : "text-gray-900",
-                                        "cursor-default select-none relative py-2 pl-3 pr-9"
-                                      )
-                                    }
-                                    value={coin}
-                                  >
-                                    {({ selected, active }) => (
-                                      <>
-                                        <span
-                                          className={classNames(
-                                            selected
-                                              ? "font-semibold"
-                                              : "font-normal",
-                                            "block truncate"
-                                          )}
-                                        >
-                                          {coin.currency}
-                                        </span>
-
-                                        {selected ? (
-                                          <span
-                                            className={classNames(
-                                              active
-                                                ? "text-white"
-                                                : "text-indigo-600",
-                                              "absolute inset-y-0 right-0 flex items-center pr-4"
-                                            )}
-                                          >
-                                            <CheckIcon
-                                              className="h-5 w-5"
-                                              aria-hidden="true"
-                                            />
-                                          </span>
-                                        ) : null}
-                                      </>
-                                    )}
-                                  </Listbox.Option>
-                                ))}
-                            </Listbox.Options>
-                          </Transition>
-                        </div>
-                      </>
-                    )}
-                  </Listbox>
-                </div>
-             )
-
-             }
                 <div className="form-group">
                   <label
                     htmlFor="tradeBotFunds"
@@ -368,13 +470,144 @@ const startBot = async () => {
                     placeholder="Target Buy Percent"
                   />
                 </div>
-                <div className="form-group">
+
+                {newTradeBot.id <= 0 && (
+                  <div className="relative flex items-start mt-4 mb-4">
+                    <div className="flex items-center h-5">
+                      <input
+                        id="tradeBotTest"
+                        aria-describedby="tradeBotTest-description"
+                        name="tradeBotTest"
+                        type="checkbox"
+                        checked={newTradeBot.test}
+                        onChange={(e) => {
+                          console.log(e.target);
+                          setNewTradeBot({
+                            ...newTradeBot,
+                            test: e.target.value == "on",
+                          });
+                        }}
+                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm">
+                      <label
+                        htmlFor="tradeBotTest"
+                        className="font-medium text-gray-700"
+                      >
+                        Test Bot
+                      </label>
+                    </div>
+                  </div>
+                )}
+                {newTradeBot.id <= 0 && (
+                  <div className="form-group">
+                    <Listbox
+                      value={newTradeBot.coin}
+                      onChange={(value: any) => {
+                        setSelectedPair(value);
+                        setNewTradeBot({
+                          ...newTradeBot,
+                          coin: value.currency,
+                        });
+                      }}
+                    >
+                      {({ open }) => (
+                        <>
+                          <Listbox.Label className="block text-sm font-medium text-gray-700">
+                            Choose Pairs
+                          </Listbox.Label>
+                          <div className="mt-1 relative">
+                            <Listbox.Button
+                              style={{ minHeight: "46px" }}
+                              className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            >
+                              <span className="block truncate">
+                                {selectedPair?.currency}
+                              </span>
+                              <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                <SelectorIcon
+                                  className="h-5 w-5 text-gray-400"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            </Listbox.Button>
+
+                            <Transition
+                              show={open}
+                              as={Fragment}
+                              leave="transition ease-in duration-100"
+                              leaveFrom="opacity-100"
+                              leaveTo="opacity-0"
+                            >
+                              <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                {coins &&
+                                  coins.map((coin) => (
+                                    <Listbox.Option
+                                      key={coin.id}
+                                      className={({ active }) =>
+                                        classNames(
+                                          active
+                                            ? "text-white bg-indigo-600"
+                                            : "text-gray-900",
+                                          "cursor-default select-none relative py-2 pl-3 pr-9"
+                                        )
+                                      }
+                                      value={coin}
+                                    >
+                                      {({ selected, active }) => (
+                                        <>
+                                          <span
+                                            className={classNames(
+                                              selected
+                                                ? "font-semibold"
+                                                : "font-normal",
+                                              "block truncate"
+                                            )}
+                                          >
+                                            {coin.currency}
+                                          </span>
+
+                                          {selected ? (
+                                            <span
+                                              className={classNames(
+                                                active
+                                                  ? "text-white"
+                                                  : "text-indigo-600",
+                                                "absolute inset-y-0 right-0 flex items-center pr-4"
+                                              )}
+                                            >
+                                              <CheckIcon
+                                                className="h-5 w-5"
+                                                aria-hidden="true"
+                                              />
+                                            </span>
+                                          ) : null}
+                                        </>
+                                      )}
+                                    </Listbox.Option>
+                                  ))}
+                              </Listbox.Options>
+                            </Transition>
+                          </div>
+                        </>
+                      )}
+                    </Listbox>
+                  </div>
+                )}
+
+                <div className="form-group mt-4">
                   <label
-                    htmlFor="tradeBotTargetBuy"
+                    htmlFor="targetSellPercent"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Target Sell Percent
+                    Target Sell %
                   </label>
+                  <p className="txt-gray-400 text-sm mt-2 mb-4">
+                    How much percent the bot will watch for from the last buy
+                    price to sell for profit gains.
+                  </p>
+
                   <input
                     type="number"
                     name="targetSellPercent"
@@ -390,13 +623,17 @@ const startBot = async () => {
                     placeholder="Target Sell Percent"
                   />
                 </div>
-                <div className="form-group">
+                <div className="form-group mt-8">
                   <label
                     htmlFor="tradeBotTargetBuy"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Target Buy Percent
+                    Target Re-Buy %
                   </label>
+                  <p className="txt-gray-400 text-sm mt-2 mb-4">
+                    How much percent the bot will watch for from the last sell
+                    price to buy back into the position.
+                  </p>
                   <input
                     type="number"
                     name="tradeBotTargetBuy"
@@ -412,33 +649,7 @@ const startBot = async () => {
                     placeholder="Target Buy Percent"
                   />
                 </div>
-{ newTradeBot.id > 0 && (
-                <div className="mt-20">
-                 {newTradeBot.active && (
-                    <button
-                    type="button"
-                    className="inline-flex mb-4 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
-                    onClick={() => stopBot()}
-                  >
-                    Stop
-                  </button>
-                 )}
-                   {!newTradeBot.active && (
-                    <button
-                    type="button"
-                    className="inline-flex mb-4 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
-                    onClick={() => startBot()}
-                  >
-                    Start
-                  </button>
-                 )}
-                </div> )}
-             
-{/* 
-                <div className="mt-20">
-                  <pre>{JSON.stringify(newTradeBot, null, 2)}</pre>
-                </div> */}
-
+                {newTradeBot.id > 0 && <div className="mt-20"></div>}
                 <div className="mt-5 sm:mt-6">
                   <button
                     type="button"

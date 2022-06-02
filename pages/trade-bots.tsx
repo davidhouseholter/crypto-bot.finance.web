@@ -7,25 +7,12 @@ import AddTradeWalletModal, {
 import { changeUserTradeBotsState } from "../pkg/redux/reducers/userTradeBots";
 import { getUserTradeBots } from "../pkg/services/tradeBotServices";
 import { useRouter } from "next/router";
-import { withCallbacks } from "../pkg/signalr/helpers";
 
-// export async function getStaticProps({ params, context }) {
-//     console.log("getStaticProps")
-//     let bots = null;
-//     bots = await getUserTradeBots();
-//     console.log(bots)
-//     return {
-//         props: {
-//           tradeBots: {},
-//         },
-//       };
-//     }
 let init = false;
 export default function TradeBotsPage() {
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [editTradeBot, setEditTradeBot] = useState<any>(null);
-
   const userTradeBots = useSelector(
     (state: any) => state.userTradeBostMode.value
   );
@@ -34,10 +21,11 @@ export default function TradeBotsPage() {
   const [showModal, setShowModal] = useState(false);
   const [showAddWalletModal, setShowAddWalletModal] = useState(false);
   const [tradeBots, setTradeBots] = useState<any[]>();
-  const [tradeWalletData, setTradeWalletData] = useState<TradeWalletViewModel>(
+  const [tradeWalletData, setTradeWalletData] = useState<any>(
     new TradeWalletViewModel()
   );
   const router = useRouter();
+
   const addTradeWallet = (modalState, tradeWallet: any = null) => {
     if (tradeWallet != null) {
       setTradeWalletData(tradeWallet);
@@ -46,7 +34,13 @@ export default function TradeBotsPage() {
     }
     setShowAddWalletModal(modalState);
   };
+  const onAddTradeBot = (showModal, addTradeWallet = false) => {
+    setShowModal(showModal)
+    setShowAddWalletModal(addTradeWallet)
+  }
   const addTradeBot = () => {
+    setEditTradeBot(null)
+    setTradeWalletData(null)
     if (userProfile.wallets.length == 0) {
       setShowAddWalletModal(true);
     } else {
@@ -65,7 +59,13 @@ export default function TradeBotsPage() {
     } else {
       fetchData();
     }
-  }, [dispatch, userTradeBots]);
+    const {addtest} = router.query;
+    if(addtest &&  userProfile){
+      router.replace('/trade-bots', undefined, { shallow: true });
+      setTradeWalletData(userProfile.wallets[0]);
+      setShowModal(true);
+    }
+  }, [dispatch, router, userProfile, userTradeBots]);
   
   useSelector((state: any) => {
     const message = state.signalrRMode.value;
@@ -76,6 +76,7 @@ export default function TradeBotsPage() {
       );
   
       if (tradeBot > -1) {
+
         const data = [...tradeBots];
         if (
           data[tradeBot].lastOrder != null &&
@@ -87,8 +88,9 @@ export default function TradeBotsPage() {
           ...data[tradeBot],
           lastOrder: message.lastOrder,
         };
-        dispatch(changeUserTradeBotsState(data));
         setTradeBots(data);
+
+        dispatch(changeUserTradeBotsState(data));
       }
     }
     if(message.currentSession) {
@@ -135,7 +137,7 @@ export default function TradeBotsPage() {
             {showModal ? (
               <>
                 <AddTradeBotModal
-                  setShowModal={setShowModal}
+                  setShowModal={onAddTradeBot}
                   wallets={userProfile.wallets}
                   tradeWalletData={tradeWalletData}
                   editTradeBot={editTradeBot}
@@ -144,7 +146,7 @@ export default function TradeBotsPage() {
             ) : null}
             {showAddWalletModal ? (
               <>
-                <AddTradeWalletModal setShowModal={addTradeWallet} />
+                <AddTradeWalletModal setShowModal={addTradeWallet} wallets={userProfile.wallets}/>
               </>
             ) : null}
           </>

@@ -57,3 +57,6 @@ export function startUserTradeBot(tradeBot: any) {
 export function stopUserTradeBot(tradeBot: any) {
   return axios.put(`${api}/user/trade-bot/${tradeBot.id}/stop`, tradeBot, {withCredentials: true});
 }
+export function deleteUserTradeBot(tradeBot: any) {
+  return axios.delete(`${api}/user/trade-bot/${tradeBot.id}`, {withCredentials: true});
+}

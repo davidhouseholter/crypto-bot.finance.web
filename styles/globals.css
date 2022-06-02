@@ -1,7 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@tailwind forms
+@tailwind forms;
+@tailwind line-clamp;
 @import url(projects.css);
 @import url(text-edit.css);
 
@@ -32,4 +33,10 @@ input:checked ~ .dot {
 
 .img-sepia {
   filter: sepia(1);
+}
+
+
+body{
+  height: 100%;
+  width: 100%;
 }

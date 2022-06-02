@@ -2,13 +2,10 @@
 import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
-  BellIcon,
   MenuIcon,
   UserCircleIcon,
   XIcon,
 } from "@heroicons/react/outline";
-import { PlusSmIcon } from "@heroicons/react/solid";
-import { useAppContext } from "../../AppWrapper";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { createLogoutHandler } from "../../../pkg";
@@ -30,7 +27,6 @@ export default function Header() {
     (state: any) => state.userIdentityMode.value
   );
   useEffect(() => {
-    console.log(userIdentity)
     if (userIdentity) {
       navigation = [
         { name: "Home", href: "/", slug: "", current: false },
