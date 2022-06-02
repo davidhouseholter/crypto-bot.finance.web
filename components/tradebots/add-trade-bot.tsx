@@ -33,7 +33,7 @@ export default function AddTradeBotModal({
   }
 
   const userTradeBots = useSelector(
-    (state: any) => state.userTradeBostMode.value as any[]
+    (state: any) => state.userTradeBotsMode.value as any[]
   );
 
   const [coins, setCoins] = useState<any[]>();

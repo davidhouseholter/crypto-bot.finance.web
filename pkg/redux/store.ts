@@ -40,7 +40,7 @@ export const store = configureStore({
     themeMode: themeModeReducer,
     userIdentityMode: userIdentityModeReducer,
     userProfileMode: userProfileStateModeReducer,
-    userTradeBostMode: userTradeBotsModeReducer,
+    userTradeBotsMode: userTradeBotsModeReducer,
     changeTradePairMode: tradePairsReducer,
     signalrRMode: signarReducer,
 

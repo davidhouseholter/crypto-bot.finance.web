@@ -14,7 +14,7 @@ export default function TradeBotsPage() {
   const dispatch = useDispatch();
   const [editTradeBot, setEditTradeBot] = useState<any>(null);
   const userTradeBots = useSelector(
-    (state: any) => state.userTradeBostMode.value
+    (state: any) => state.userTradeBotsMode.value
   );
   const userProfile = useSelector((state: any) => state.userProfileMode.value);
 
