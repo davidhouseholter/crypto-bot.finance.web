@@ -82,7 +82,6 @@ const Login: NextPage = () => {
         .getSelfServiceLoginFlow(String(flowId))
         .then(({ data }) => {
           setFlow(data);
-          console.log(flow);
         })
         .catch(handleGetFlowError(router, "login", setFlow));
       return;
@@ -133,13 +132,11 @@ const Login: NextPage = () => {
           // We logged in successfully! Let's bring the user home.
           .then((res) => {
             getUserInformation().then((user: any) => {
-              console.log("data", user);
               let sharedState = {
                 hasSession: user == null ? false : true,
                 currentUser: user,
                 lastCheck: true,
               };
-              // console.log("sharedState", sharedState)
               dispatch(changeUserIdentityState(sharedState));
               if (flow?.return_to) {
                 window.location.href = flow?.return_to;

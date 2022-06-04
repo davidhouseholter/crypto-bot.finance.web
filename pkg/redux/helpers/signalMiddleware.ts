@@ -33,11 +33,9 @@ export default class Connector {
       const dispatch = useDispatch();
       const update = {event:"AccountNotification", data:data}
       dispatch(onUpdateSignarState(update))
-      console.log("AccountNotification", data);
     });
     this.connection.on("TradeBotSessionUpdate", (data) => {
       const dispatch = useDispatch();
-      console.log("TradeBotSessionUpdate", data);
       const update = {event:"TradeBotSessionUpdate", data:data}
       dispatch(onUpdateSignarState(update))
     });

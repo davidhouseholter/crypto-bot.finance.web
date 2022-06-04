@@ -6,7 +6,6 @@ import { changeDarkMode } from "../pkg/redux/reducers/darkMode";
 
 const Toggle = () => {
   const [darkmode, setDarkmode] = useState<boolean>();
-  console.log("Tog", darkmode)
   const dispatch = useDispatch();
 
   const ToggleNow = () => {

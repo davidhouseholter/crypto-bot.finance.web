@@ -1,4 +1,4 @@
-import { CheckIcon, MailIcon, UserCircleIcon } from "@heroicons/react/outline";
+import { CheckIcon, ChevronRightIcon, MailIcon, QuestionMarkCircleIcon, UserCircleIcon, ViewGridAddIcon } from "@heroicons/react/outline";
 import { BeakerIcon, FolderIcon } from "@heroicons/react/solid";
 import { IncomingMessage } from "http";
 import Link from "next/link";
@@ -22,6 +22,7 @@ import { saveTradeWallet } from "../pkg/services/tradeBotServices";
 import { TradeWalletViewModel, WalletConfigExchangeType } from "../components/tradebots/add-trade-wallet";
 import { useRouter } from "next/router";
 import { changeUserProfileState } from "../pkg/redux/reducers/userProfileState";
+import Image from "next/image";
 
 
 function classNames(...classes) {
@@ -39,18 +40,18 @@ export default function Home() {
   //     'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
   // }
 
- 
+
   const stats = [
-    { label: 'Pools', value: user?.wallets.length ?? 0 },
-    { label: 'Bots', value: 0 },
+    { label: `Pool${user?.wallets.length > 1 ? 's' : ''}`, value: user?.wallets.length ?? 0 },
+    { label: `Bot${user?.bots.length > 1 ? 's' : ''}`, value: user?.bots.length ?? 0 },
     { label: 'Sells', value: 0 },
   ]
-  const actions:{icon:any, name:string, description: string, href:string, iconForeground: string, iconBackground: string, click: any}[] = [
-  
+  const actions: { icon: any, name: string, description: string, href: string, iconForeground: string, iconBackground: string, click: any }[] = [
+
   ]
 
-  if(user?.wallets.length == 0) {
-    actions.push( {
+  if (user?.wallets.length == 0) {
+    actions.push({
       icon: BadgeCheckIcon,
       name: 'First Trade Bot',
       href: '#',
@@ -58,10 +59,9 @@ export default function Home() {
       iconBackground: 'bg-rose-50',
       description: `Create you first trade bot.`,
       click: async () => {
-        console.log('first', user)
       }
     })
-    actions.push( {
+    actions.push({
       icon: AcademicCapIcon,
       name: 'Test Bot',
       href: '#',
@@ -73,15 +73,14 @@ export default function Home() {
         tradeWalletData.exchangeType = WalletConfigExchangeType.TestBot;
         tradeWalletData.name = "Test Bot Pool"
         const result = await saveTradeWallet(tradeWalletData!);
-        console.log(result);
         let wallets = [...user.wallets];
         wallets.push(result.data)
-        dispatch(changeUserProfileState({...user, wallets: wallets}));
+        dispatch(changeUserProfileState({ ...user, wallets: wallets }));
 
-       setTimeout(() => {
-        router.push('/trade-bots?addtest=true')
-       }, 100);
-        
+        setTimeout(() => {
+          router.push('/trade-bots?addtest=true')
+        }, 100);
+
       }
     })
   }
@@ -133,8 +132,8 @@ export default function Home() {
   //     href: '#',
   //   },
   // ]
- 
-  
+
+
 
   return (
     user && (
@@ -156,33 +155,33 @@ export default function Home() {
                       <div className="sm:flex sm:items-center sm:justify-between">
                         <div className="sm:flex sm:space-x-5">
                           <div className="flex-shrink-0">
-                         
+
                           </div>
                           <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
                             <p className="text-sm font-medium text-gray-600">
                               Welcome back,
                             </p>
                             <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-                              {user.firstName}   {user.lastName} 
+                              {user.firstName}   {user.lastName}
                             </p>
-                           
+
                           </div>
                         </div>
                         <div className="mt-5 flex justify-center sm:mt-0">
-                        <Link href={'profile'}>
-                        <a
-                            
-                            className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                          >
-                            View profile
-                          </a></Link>
+                          <Link href={'profile'}>
+                            <a
+
+                              className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            >
+                              View profile
+                            </a></Link>
                         </div>
                       </div>
                     </div>
                     <div className="border-t border-gray-200 bg-gray-50 grid grid-cols-1 divide-y divide-gray-200 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
                       {stats.map((stat) => (
                         <div
-                         
+
                           key={stat.label}
                           className="px-6 py-5 text-sm font-medium text-center"
                         >
@@ -202,7 +201,7 @@ export default function Home() {
                     </h2>
                     {actions.map((action, actionIdx) => (
                       <div
-                      onClick={action.click}
+                        onClick={action.click}
                         key={action.name}
                         className={classNames(
                           actionIdx === 0
@@ -265,6 +264,125 @@ export default function Home() {
                         </span>
                       </div>
                     ))}
+                  </div>
+                </section>
+                <section aria-labelledby="notes-title">
+                  <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
+                    <div className="divide-y divide-gray-200">
+                      <div className="px-4 py-5 sm:px-6">
+                        <div className="sm:flex sm:items-center sm:justify-between ">
+                          <div className="sm:flex sm:space-x-5">
+                            <h2 id="notes-title" className="text-lg font-medium text-gray-900">
+                              Active Bots
+                            </h2>
+
+                          </div>
+                          <div className="mt-5 flex justify-center sm:mt-0">
+                            <Link href={'trade-bots'}>
+                              <a className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                View All ({user?.bots.length})
+                              </a></Link>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="px-4 py-6 sm:px-6">
+                        <ul role="list" className="space-y-8">
+                          {user.bots?.map((bot) => (
+                            <Link href={`/trade-bots/${bot.id}`} key={bot.id} >
+                              <li className="p-4 cursor-pointer hover:bg-blue-100 hover:shadow-lg items-center  hover:text-gray-700 hover:border-gray-200">
+                                <div className="flex space-x-3 justify-between ">
+                                  <div className="flex-shrink-0">
+                                    <Image
+                                      src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/color/${`${bot.coin}`.toLowerCase()}.svg`}
+
+                                      width="32px" height="32px"
+                                    />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm">
+                                      <h3 className="text-medium font-medium text-gray-900"> {bot.name}</h3>
+                                    </div>
+                                    <div className="mt-1 text-sm text-gray-700">
+                                      <p>{bot.body}</p>
+                                    </div>
+                                    <div className="mt-2 text-sm space-x-2">
+                                      {/* <pre>{JSON.stringify(bot, null, 2)}</pre> */}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <ChevronRightIcon
+                                      className="h-5 w-5 text-gray-400 group-hover:text-gray-700"
+                                      aria-hidden="true"
+                                    />
+                                  </div>
+                                </div>
+                              </li>
+                            </Link>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-6 sm:px-6">
+                      <div className="flex space-x-3">
+                        <div className="flex-shrink-0">
+                          <ViewGridAddIcon />
+                        </div>
+                        <div className="min-w-0 flex-1">
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <section aria-labelledby="notes-title">
+                  <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
+                    <div className="divide-y divide-gray-200">
+                      <div className="px-4 py-5 sm:px-6">
+                        <div className="sm:flex sm:items-center sm:justify-between ">
+                          <div className="sm:flex sm:space-x-5">
+                            <h2 id="notes-title" className="text-lg font-medium text-gray-900">
+                              Pools
+                            </h2>
+
+                          </div>
+                          <div className="mt-5 flex justify-center sm:mt-0">
+
+                          </div>
+                        </div>
+                      </div>
+                      <div className="px-4 py-6 sm:px-6">
+                        <ul role="list" className="space-y-8">
+                          {user.wallets?.map((wallet) => (
+                            <li className="p-4" key={wallet.id}>
+                              <div className="flex space-x-3 justify-between ">
+                                <div>
+                                  <div className="text-sm">
+                                    <h3 className="text-medium font-medium text-gray-900"> {wallet.name}</h3>
+                                  </div>
+
+                                </div>
+                                <div>
+                                  {/* <ChevronRightIcon
+                                    className="h-5 w-5 text-gray-400 group-hover:text-gray-700"
+                                    aria-hidden="true"
+                                  /> */}
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-6 sm:px-6">
+                      <div className="flex space-x-3">
+                        <div className="flex-shrink-0">
+                          <ViewGridAddIcon />
+                        </div>
+                        <div className="min-w-0 flex-1">
+
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </section>
               </div>
@@ -384,7 +502,7 @@ export default function Home() {
           </div>
         </main>
         <footer>
-      
+
         </footer>
       </>
     )

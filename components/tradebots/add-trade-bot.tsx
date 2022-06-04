@@ -4,10 +4,11 @@ import {
   CheckIcon,
   DotsVerticalIcon,
 } from "@heroicons/react/outline";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTradePairState } from "../../pkg/redux/reducers/tradePairs";
 import Notiflix, { Confirm } from "notiflix";
+import { useRouter } from "next/router";
 
 import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
 import {
@@ -20,6 +21,7 @@ import {
 } from "../../pkg/services/tradeBotServices";
 import { Popover } from "@headlessui/react";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import Image from "next/image";
 
 export default function AddTradeBotModal({
   setShowModal,
@@ -32,6 +34,8 @@ export default function AddTradeBotModal({
     return classes.filter(Boolean).join(" ");
   }
 
+  const router = useRouter();
+
   const userTradeBots = useSelector(
     (state: any) => state.userTradeBotsMode.value as any[]
   );
@@ -42,8 +46,7 @@ export default function AddTradeBotModal({
   );
   const [newTradeBot, setNewTradeBot] = useState(
     editTradeBot
-      ? editTradeBot
-      : {
+      ? editTradeBot : {
         id: 0,
         name: "",
         active: true,
@@ -95,20 +98,21 @@ export default function AddTradeBotModal({
     setLoading(true);
     if (newTradeBot.id == 0) {
       const result = await postStartUserTradeBot(newTradeBot);
-
       dispatch(changeUserTradeBotsState([...userTradeBots, result.data]));
       setLoading(false);
 
       setShowModal(false);
     } else {
       const result = await putStartUserTradeBot(newTradeBot);
+      if (userTradeBots) {
 
-      dispatch(
-        changeUserTradeBotsState([
-          ...userTradeBots.filter((i) => i.id != newTradeBot.id),
-          result.data,
-        ])
-      );
+        dispatch(
+          changeUserTradeBotsState([
+            ...userTradeBots.filter((i) => i.id != newTradeBot.id),
+            result.data,
+          ])
+        );
+      }
       setLoading(false);
 
       setShowModal(false);
@@ -124,17 +128,19 @@ export default function AddTradeBotModal({
       async () => {
         try {
           const result = await stopUserTradeBot(newTradeBot);
-          dispatch(
-            changeUserTradeBotsState([
-              ...userTradeBots.filter((i) => i.id != newTradeBot.id),
-              { ...newTradeBot, active: false },
-            ])
-          );
-          setShowModal(false);
-          close();
-        } catch {
+          if (userTradeBots) {
+            dispatch(
+              changeUserTradeBotsState([
+                ...userTradeBots.filter((i) => i.id != newTradeBot.id),
+                { ...newTradeBot, active: false },
+              ])
+            );
+          }
+
+          setShowModal(false, { ...newTradeBot, active: false });
+        } catch (e) {
           Notify.failure('Request Failed');
-    
+
         }
       },
       () => {
@@ -143,7 +149,7 @@ export default function AddTradeBotModal({
       {
       },
     );
-    
+
 
   };
   const startBot = async (close: Function) => {
@@ -155,17 +161,18 @@ export default function AddTradeBotModal({
       async () => {
         try {
           const result = await startUserTradeBot(newTradeBot);
-          dispatch(
-            changeUserTradeBotsState([
-              ...userTradeBots.filter((i) => i.id != newTradeBot.id),
-              { ...newTradeBot, active: true },
-            ])
-          );
-          setShowModal(false);
-          close();
-        } catch {
+          if (userTradeBots) {
+            dispatch(
+              changeUserTradeBotsState([
+                ...userTradeBots.filter((i) => i.id != newTradeBot.id),
+                { ...newTradeBot, active: true },
+              ])
+            );
+          }
+          setShowModal(false, { ...newTradeBot, active: true });
+        } catch (e) {
           Notify.failure('Request Failed');
-    
+
         }
       },
       () => {
@@ -174,7 +181,7 @@ export default function AddTradeBotModal({
       {
       },
     );
-   
+
 
   };
 
@@ -193,7 +200,7 @@ export default function AddTradeBotModal({
             ])
           );
           setShowModal(false);
-          close();
+          router.push('/trade-bots')
         } catch {
           Notify.failure('Request Failed');
 
@@ -244,7 +251,6 @@ export default function AddTradeBotModal({
                       <div className="ml-3 inline-flex sm:ml-0">
                         <Popover className="relative">
                           <Popover.Button>
-                            {" "}
                             <span className="sr-only">Open options menu</span>
                             <DotsVerticalIcon
                               className="h-5 w-5"
@@ -481,7 +487,6 @@ export default function AddTradeBotModal({
                         type="checkbox"
                         checked={newTradeBot.test}
                         onChange={(e) => {
-                          console.log(e.target);
                           setNewTradeBot({
                             ...newTradeBot,
                             test: e.target.value == "on",
@@ -557,6 +562,12 @@ export default function AddTradeBotModal({
                                     >
                                       {({ selected, active }) => (
                                         <>
+
+                                          <Image
+                                            src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/color/${`${coin.currency}`.toLowerCase()}.svg`}
+
+                                            width="32px" height="32px"
+                                          />
                                           <span
                                             className={classNames(
                                               selected

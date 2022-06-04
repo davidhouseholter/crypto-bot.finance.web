@@ -21,11 +21,9 @@ export const connection = new HubConnectionBuilder()
   .build();
 const callbacks = withCallbacks()
   .add('TradeBotSessionUpdate', (msg: string) => (dispatch) => {
-    // console.log(msg)
     dispatch(onUpdateSignarState(msg));
   })
   .add('TradeBotOrderUpdate', (msg: string) => (dispatch) => {
-   // console.log('TradeBotOrderUpdate', msg)
     dispatch(onUpdateOrderSignarState(msg));
   });
   

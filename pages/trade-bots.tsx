@@ -7,6 +7,8 @@ import AddTradeWalletModal, {
 import { changeUserTradeBotsState } from "../pkg/redux/reducers/userTradeBots";
 import { getUserTradeBots } from "../pkg/services/tradeBotServices";
 import { useRouter } from "next/router";
+import { BeakerIcon } from "@heroicons/react/outline";
+import Image from "next/image";
 
 let init = false;
 export default function TradeBotsPage() {
@@ -165,12 +167,7 @@ export default function TradeBotsPage() {
                   >
                     Name
                   </th>
-                  <th
-                    scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                  >
-                    Coin
-                  </th>
+                 
                   <th
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
@@ -203,7 +200,7 @@ export default function TradeBotsPage() {
                     Order Date
                   </th>
                
-                  <th
+                  {/* <th
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
@@ -215,7 +212,7 @@ export default function TradeBotsPage() {
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
                     Bot Details
-                  </th>
+                  </th> */}
                   <th
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
@@ -234,10 +231,10 @@ export default function TradeBotsPage() {
                         router.push(`/trade-bots/${bot.id}`);
                       }}
                     >
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <p> {bot.name}</p>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6 w-1/6">
+                        <p className="flex"> {bot.test && (<BeakerIcon className="h-5 w-5 text-blue-500" />)} {bot.name}</p>
                         <span>
-                          {bot.test && "test"}
+                          
                           <br></br>
                           {!bot.active && "stopped"}
                           {/*
@@ -246,10 +243,17 @@ export default function TradeBotsPage() {
                             <i *ngIf="bot.pending" class="icon ion-md-warning"><span
                                 class="ms-2">Pending</span></i> */}
                         </span>
+                        {/* `https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/${style}/${name}.svg`; */}
+                        <p>
+                          
+                        <Image
+                            src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/color/${`${bot.coin}`.toLowerCase()}.svg`}
+                            
+                            width="32px" height="32px" 
+                          />
+{bot.coin}</p>
                       </td>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <p>{bot.coin}</p>
-                      </td>
+                    
 
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         {bot.currentSession == null ? (
@@ -322,7 +326,7 @@ export default function TradeBotsPage() {
                         <p>{new Date(bot.lastOrder?.marketOrderCreatedAt).toLocaleString()}</p>
                       </td>
                       
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                      {/* <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         {bot.currentSession == null ? (
                           "loading"
                         ) : (
@@ -338,7 +342,7 @@ export default function TradeBotsPage() {
                           {bot.targetSellPercent} ({bot.peakVarianceDropSell} )
                           {bot.targetBuyPercent} ({bot.peakVarianceDropSell})
                         </p>
-                      </td>
+                      </td> */}
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         {/* (click)="onEditTradeBot(bot)" */}
                         <button

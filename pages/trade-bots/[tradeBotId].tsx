@@ -1,7 +1,7 @@
-import { PaperClipIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import AddTradeBotModal from "../../components/tradebots/add-trade-bot";
 import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
 import {
   getUserTradeBotById,
@@ -61,7 +61,7 @@ export default function TradeBotDetails() {
 
   useSelector((state: any) => {
     const message = state.signalrRMode.value;
-    
+
     if (!botDetails || message == null) return;
     if (message.lastOrder) {
 
@@ -94,7 +94,6 @@ export default function TradeBotDetails() {
       // }
     }
     if (message.currentSession) {
-      console.log(message.currentSession.tradeBotId)
       if (botDetails.currentSession == null) {
         setBotDetails({ ...botDetails, currentSession: message.currentSession });
         return;
@@ -122,7 +121,6 @@ export default function TradeBotDetails() {
       //   setTradeBots(data);
       // }
     }
-
   });
   // useSelector((state: any) => {
   //   const message = state.signalrRMode.value;
@@ -168,49 +166,71 @@ export default function TradeBotDetails() {
   //     }
   //   }
   // });
-  useSelector((state: any) => {
-    const message = state.signalrRMode.value;
 
-    if (!botDetails || message == null) return;
+  // useSelector((state: any) => {
+  //   const message = state.signalrRMode.value;
 
-    if (message.lastOrder && message.lastOrder.tradeBotId == botDetails.id) {
-      if (botDetails.id == message.lastOrder.tradeBotId) {
-        if (botDetails.lastOrder == null) {
-          botDetails.lastOrder = message.lastOrder;
-          setBotDetails(botDetails);
-        }
-        if (message.lastOrder.id != botDetails.lastOrder.id) {
-          botDetails.lastOrder = message.lastOrder;
-          setBotDetails(botDetails);
-        }
-      }
+  //   if (!botDetails || message == null) return;
+
+  //   if (message.lastOrder && message.lastOrder.tradeBotId == botDetails.id) {
+  //     if (botDetails.id == message.lastOrder.tradeBotId) {
+  //       if (botDetails.lastOrder == null) {
+  //         botDetails.lastOrder = message.lastOrder;
+  //         setBotDetails(botDetails);
+  //       }
+  //       if (message.lastOrder.id != botDetails.lastOrder.id) {
+  //         botDetails.lastOrder = message.lastOrder;
+  //         setBotDetails(botDetails);
+  //       }
+  //     }
+  //   }
+  //   if (
+  //     message.currentSession &&
+  //     botDetails.id == message.currentSession.tradeBotId
+  //   ) {
+  //     if (botDetails.id == message.currentSession.tradeBotId) {
+  //       if (botDetails.currentSession == null) {
+  //         botDetails.currentSession = message.currentSession;
+  //         setBotDetails(botDetails);
+  //       }
+  //       if (message.currentSession.id != botDetails.currentSession.id) {
+  //         botDetails.currentSession = message.currentSession;
+  //         setBotDetails(botDetails);
+  //       }
+  //     }
+  //   }
+  // });
+
+  const onAddTradeBot = (showModal, newBot: any = null) => {
+    setShowModal(showModal)
+    if(newBot != null) {
+      setBotDetails({...botDetails, ...newBot})
     }
-    if (
-      message.currentSession &&
-      botDetails.id == message.currentSession.tradeBotId
-    ) {
-      if (botDetails.id == message.currentSession.tradeBotId) {
-        if (botDetails.currentSession == null) {
-          botDetails.currentSession = message.currentSession;
-          setBotDetails(botDetails);
-          console.log("1", botDetails, message);
-        }
-        if (message.currentSession.id != botDetails.currentSession.id) {
-          botDetails.currentSession = message.currentSession;
-          setBotDetails(botDetails);
-        }
-      }
-    }
-  });
+    
+  }
+
+  const [showModal, setShowModal] = useState(false);
+  const userProfile = useSelector((state: any) => state.userProfileMode.value);
+
   return (
     botDetails && (
       <>
+        {showModal ? (
+          <>
+            <AddTradeBotModal
+              setShowModal={onAddTradeBot}
+              wallets={userProfile.wallets}
+              tradeWalletData={{}}
+              editTradeBot={botDetails}
+            />
+          </>
+        ) : null}
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6">
               <div className="flex ">
                 <h3 className="text-xl leading-6 font-medium text-gray-900">
-                  {botDetails.name}
+                  {botDetails.name} {!botDetails.active && "(Stopped)"}
                 </h3>
                 {botDetails.lastOrder && botDetails.currentSession && (
                   <span className="ml-2">
@@ -240,7 +260,6 @@ export default function TradeBotDetails() {
                         <>
                           {botDetails.currentSession?.percent < 0 && (
                             <>
-                              {" "}
                               {-1 * botDetails.currentSession?.percent}%
                               <span>(above sell)</span>
                             </>
@@ -315,8 +334,9 @@ export default function TradeBotDetails() {
                   <dt className="text-sm font-medium text-gray-500">Actions</dt>
                   <dd className="mt-1 text-sm text-gray-900">
                     <div>
-                      {/* (click)="onEditTradeBot(bot)" */}
+                      {/*  */}
                       <button type="button"
+                        onClick={() => { setShowModal(true) }}
                         className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Edit</button>
                       {/* (click)="onCreateTradeBotOrder()" */}
                       <button type="button"

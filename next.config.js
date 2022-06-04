@@ -5,7 +5,7 @@ module.exports = {
   reactStrictMode: true,
   strictMode: true,
   images: {
-    domains: ['storage.googleapis.com'],
+    domains: ['storage.googleapis.com', 'cdn.jsdelivr.net'],
   },
   // exportPathMap: async function (defaultPathMap) {
   //   const paths = await client

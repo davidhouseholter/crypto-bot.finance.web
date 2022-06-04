@@ -44,7 +44,6 @@ export default function AddTradeWalletModal({ setShowModal, wallets }) {
 
   const addWalletType = (exchange) => {
     setCurrentExchange(exchange);
-    console.log(exchange)
     setTradeWalletData({...tradeWalletData, exchangeType:exchange.exchangeType})
   };
 
@@ -75,7 +74,6 @@ export default function AddTradeWalletModal({ setShowModal, wallets }) {
   }, [wallets])
   
   const onComplete = (newWallet) => {
-    console.log(newWallet)
     setTradeWalletData({...tradeWalletData, 
       name: newWallet.name,
       config: newWallet.config

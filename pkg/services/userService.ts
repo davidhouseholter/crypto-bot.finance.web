@@ -21,8 +21,6 @@ export function getUserInformation() {
             resolve(data)
         })
         .catch((err: AxiosError) => {
-            console.log(err)
-
             switch (err.response?.status) {
                 case 403:
                 // This is a legacy error code thrown. See code 422 for

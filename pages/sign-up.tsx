@@ -124,7 +124,6 @@ export function Registration() {
           // If we ended up here, it means we are successfully signed up!
           //
           // You can do cool stuff here, like having access to the identity which just signed up:
-          console.log("This is the user session: ", data, data.identity);
           let sharedState = {
             hasSession: true,
             currentUser: data.identity,
