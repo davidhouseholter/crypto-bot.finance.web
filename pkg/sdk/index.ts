@@ -2,7 +2,7 @@ import { Configuration, V0alpha2Api } from '@ory/client'
 import { edgeConfig } from '@ory/integrations/next'
 const api = process.env.NEXT_PUBLIC_API_ENDPOINT;
 let config = new Configuration(edgeConfig);
-if(false){
+if(true){
 //if(process.env.PRODUCTION){
     config = new Configuration({...edgeConfig,
         basePath: "https://id.crypto-bot.finance",
