@@ -43,7 +43,7 @@ export default function Home() {
 
   const stats = [
     { label: `Pool${user?.wallets.length > 1 ? 's' : ''}`, value: user?.wallets.length ?? 0 },
-    { label: `Bot${user?.bots.length > 1 ? 's' : ''}`, value: user?.bots.length ?? 0 },
+    { label: `Bot${user?.bots?.length > 1 ? 's' : ''}`, value: user?.bots?.length ?? 0 },
     { label: 'Sells', value: 0 },
   ]
   const actions: { icon: any, name: string, description: string, href: string, iconForeground: string, iconBackground: string, click: any }[] = [
@@ -280,7 +280,7 @@ export default function Home() {
                           <div className="mt-5 flex justify-center sm:mt-0">
                             <Link href={'trade-bots'}>
                               <a className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                View All ({user?.bots.length})
+                                View All ({user?.bots?.length})
                               </a></Link>
                           </div>
                         </div>
