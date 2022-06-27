@@ -1,33 +1,27 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import {  useSelector } from "react-redux";
 import AddTradeBotModal from "../components/tradebots/add-trade-bot";
 import AddTradeWalletModal, {
   TradeWalletViewModel,
 } from "../components/tradebots/add-trade-wallet";
-import { changeUserTradeBotsState } from "../pkg/redux/reducers/userTradeBots";
-import { getUserTradeBots } from "../pkg/services/tradeBotServices";
 import { useRouter } from "next/router";
 import { BeakerIcon } from "@heroicons/react/outline";
 import Image from "next/image";
+import { useAuth } from "../pkg/providers/Auth";
 
 let init = false;
 export default function TradeBotsPage() {
-  const [isLoading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+  const { user, tradeBots } = useAuth();
   const [editTradeBot, setEditTradeBot] = useState<any>(null);
-  const userTradeBots = useSelector(
-    (state: any) => state.userTradeBotsMode.value
-  );
+
   const userProfile = useSelector((state: any) => state.userProfileMode.value);
 
   const [showModal, setShowModal] = useState(false);
   const [showAddWalletModal, setShowAddWalletModal] = useState(false);
-  const [tradeBots, setTradeBots] = useState<any[]>();
   const [tradeWalletData, setTradeWalletData] = useState<any>(
     new TradeWalletViewModel()
   );
   const router = useRouter();
-
   const addTradeWallet = (modalState, tradeWallet: any = null) => {
     if (tradeWallet != null) {
       setTradeWalletData(tradeWallet);
@@ -49,76 +43,7 @@ export default function TradeBotsPage() {
       setShowModal(true);
     }
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      const bots = await getUserTradeBots();
-      dispatch(changeUserTradeBotsState(bots));
-      setTradeBots(bots);
-      init = true;
-    };
-    if (userTradeBots != null) {
-      setTradeBots(userTradeBots);
-    } else {
-      fetchData();
-    }
-    const {addtest} = router.query;
-    if(addtest &&  userProfile){
-      router.replace('/trade-bots', undefined, { shallow: true });
-      setTradeWalletData(userProfile.wallets[0]);
-      setShowModal(true);
-    }
-  }, [dispatch, router, userProfile, userTradeBots]);
-  
-  useSelector((state: any) => {
-    const message = state.signalrRMode.value;
-    if(!tradeBots || message == null) return;
-    if(message.lastOrder) {
-      const tradeBot = tradeBots.findIndex(
-        (i) => message?.lastOrder.tradeBotId == i.id
-      );
-  
-      if (tradeBot > -1) {
 
-        const data = [...tradeBots];
-        if (
-          data[tradeBot].lastOrder != null &&
-          data[tradeBot].lastOrder.id == message.lastOrder.id
-        )
-          return;
-  
-        data[tradeBot] = {
-          ...data[tradeBot],
-          lastOrder: message.lastOrder,
-        };
-        setTradeBots(data);
-
-        dispatch(changeUserTradeBotsState(data));
-      }
-    }
-    if(message.currentSession) {
-      const tradeBot = tradeBots.findIndex(
-        (i) => message?.currentSession.tradeBotId == i.id
-      );
-  
-      if (tradeBot > -1) {
-        const data = [...tradeBots];
-        if (
-          data[tradeBot].currentSession != null &&
-          data[tradeBot].currentSession.id == message.currentSession.id
-        )
-          return;
-  
-        data[tradeBot] = {
-          ...data[tradeBot],
-          currentSession: message.currentSession,
-        };
-       
-        setTradeBots(data);
-      }
-    }
-   
-  });
- 
   return userProfile && (
     <div className="px-4 sm:px-6 lg:px-8 mt-4">
       <div className="sm:flex sm:items-center">

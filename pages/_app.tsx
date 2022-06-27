@@ -7,6 +7,7 @@ import { Provider, useSelector } from "react-redux";
 import { AppWrapper } from "../components/AppWrapper";
 import { store } from "../pkg/redux/store";
 import { ToastContainer } from "react-toastify";
+import { ProvideAuth } from "../pkg/providers/Auth";
 
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -26,19 +27,19 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <div className="h-full bg-gray-50">
         <Provider store={store}>
-          <AppWrapper>
-            <Header />
-
-            <section
-              className={
-                loading === true ? "dark:animate-none animate-Loading " : ""
-              }
-            >
-              <Component {...pageProps} />
-            </section>
-
-            <Footer />
-          </AppWrapper>
+          <ProvideAuth>
+            <AppWrapper>
+              <Header />
+              <section
+                className={
+                  loading === true ? "dark:animate-none animate-Loading " : ""
+                }
+              >
+                <Component {...pageProps} />
+              </section>
+              <Footer />
+            </AppWrapper>
+          </ProvideAuth>
         </Provider>
       </div>
       <ToastContainer />

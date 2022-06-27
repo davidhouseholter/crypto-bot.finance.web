@@ -11,29 +11,31 @@ import { withCallbacks } from '../signalr/helpers'
 import signalMiddleware from '../signalr/signalr-middleware'
 const api = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
-export const connection = new HubConnectionBuilder()
-  .configureLogging(LogLevel.Error)
-  .withUrl(`${api}/hub/user`, {
-    skipNegotiation: true,
-    transport: HttpTransportType.WebSockets,
-  })
-  .withAutomaticReconnect()
-  .build();
-const callbacks = withCallbacks()
-  .add('TradeBotSessionUpdate', (msg: string) => (dispatch) => {
-    dispatch(onUpdateSignarState(msg));
-  })
-  .add('TradeBotOrderUpdate', (msg: string) => (dispatch) => {
-    dispatch(onUpdateOrderSignarState(msg));
-  });
+// export const connection = new HubConnectionBuilder()
+//   .configureLogging(LogLevel.Error)
+//   .withUrl(`${api}/hub/user`, {
+//     skipNegotiation: true,
+//     transport: HttpTransportType.WebSockets,
+//   })
+//   .withAutomaticReconnect()
+//   .build();
+// const callbacks = withCallbacks()
+//   .add('TradeBotSessionUpdate', (msg: string) => (dispatch) => {
+//     console.log('TradeBotSessionUpdate', msg)
+//     //dispatch(onUpdateSignarState(msg));
+//   })
+//   .add('TradeBotOrderUpdate', (msg: string) => (dispatch) => {
+//     console.log('TradeBotOrderUpdate', msg)
+//     //dispatch(onUpdateOrderSignarState(msg));
+//   });
   
-const signal = signalMiddleware({
-  callbacks,
-  connection,
-  shouldConnectionStartImmediately:false
-});
+// const signal = signalMiddleware({
+//   callbacks,
+//   connection,
+//   shouldConnectionStartImmediately:false
+// });
 export const store = configureStore({
-  middleware: [signal],
+ //middleware: [signal],
   reducer: {
     themeMode: themeModeReducer,
     userIdentityMode: userIdentityModeReducer,

@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddTradeBotModal from "../../components/tradebots/add-trade-bot";
+import { useAuth } from "../../pkg/providers/Auth";
 import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
 import {
   getUserTradeBotById,
@@ -9,22 +10,28 @@ import {
   getUserTradeBots,
 } from "../../pkg/services/tradeBotServices";
 
-let tradeBotDetails: any = null;
-
 export default function TradeBotDetails() {
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
-  const [botDetails, setBotDetails] = useState<any>();
-  const [tradeBots, setTradeBots] = useState<any[]>([]);
-  const [tradeBotOrders, setTradeBotOrders] = useState<any[]>([]);
-  const dispatch = useDispatch();
+  const { tradeBots } = useAuth();
+  const [tradeBot, setTradeBot] = useState<any>();
 
-  const tradeBotsData = useSelector((state: any) => state.userTradeBotsMode?.value);
+  const [tradeBotOrders, setTradeBotOrders] = useState<any[]>([]);
+
+  // const tradeBotsData = useSelector((state: any) => state.userTradeBotsMode?.value);
   const tradeBotId = router.query.tradeBotId ? +router.query.tradeBotId : 0;
+  const match = tradeBots.find(i => i.id == tradeBotId);
+  const [botDetails, setBotDetails] = useState<any>(match ? match : null);
+
   useEffect(() => {
     const fetchTradeBotData = async () => {
       const bot = await getUserTradeBotById(tradeBotId);
-      tradeBotDetails = bot;
+      // if(botDetails) {
+      //   setBotDetails({...bot, lastOrder: botDetails.lastOrder , currentSession: botDetails.currentSession});
+      // }
+      // else {
+
+      // }
       setBotDetails(bot);
       fetchTradeBotOrderData();
 
@@ -37,176 +44,42 @@ export default function TradeBotDetails() {
     if (tradeBotId == 0) {
       return;
     }
-    if (tradeBotDetails != null && tradeBotDetails.id == tradeBotId) {
-      setBotDetails(tradeBotDetails);
-
+    const botMatchDetails = tradeBots.find(i => i.id == tradeBotId);
+    if (botMatchDetails) {
+      setBotDetails(botMatchDetails);
       fetchTradeBotOrderData();
     } else {
       fetchTradeBotData();
     }
+
   }, [tradeBotId]);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const bots = await getUserTradeBots();
-  //     dispatch(changeUserTradeBotsState(bots));
-  //     setTradeBots(bots);
-  //   };
-  //   if (tradeBotsData != null) {
-  //     setTradeBots(tradeBotsData);
-  //   } else {
-  //     fetchData();
-  //   }
 
-  // }, [dispatch, router, tradeBotsData]);
-
-  useSelector((state: any) => {
-    const message = state.signalrRMode.value;
-
+  useEffect(() => {
+    if (tradeBots == null) return;
+    const message = tradeBots.find(i => i.id == tradeBotId);
     if (!botDetails || message == null) return;
     if (message.lastOrder) {
 
-      if (botDetails.lastOrder == null) {
+      if (botDetails.lastOrder == null || message.lastOrder.id != botDetails.lastOrder.id) {
         setBotDetails({ ...botDetails, lastOrder: message.lastOrder });
       }
-      if (botDetails.id != message.lastOrder.tradeBotId) return;
-      if (message.lastOrder.id == botDetails.lastOrder.id) return;
-      // setBotDetails({ ...botDetails, lastOrder: message.lastOrder });
-      // const tradeBot = tradeBots.findIndex(
-      //   (i) => message?.lastOrder.tradeBotId == i.id
-      // );
-
-      // if (tradeBot > -1) {
-
-      //   const data = [...tradeBots];
-      //   if (
-      //     data[tradeBot].lastOrder != null &&
-      //     data[tradeBot].lastOrder.id == message.lastOrder.id
-      //   )
-      //     return;
-
-      //   data[tradeBot] = {
-      //     ...data[tradeBot],
-      //     lastOrder: message.lastOrder,
-      //   };
-      //   setTradeBots(data);
-
-      //   dispatch(changeUserTradeBotsState(data));
-      // }
     }
     if (message.currentSession) {
-      if (botDetails.currentSession == null) {
+      debugger
+      if (botDetails.currentSession == null || message.currentSession.id != botDetails.currentSession.id) {
         setBotDetails({ ...botDetails, currentSession: message.currentSession });
-        return;
       }
-      if (botDetails.id != message.currentSession.tradeBotId) return;
-      if (message.currentSession.id == botDetails.currentSession.id) return;
-      setBotDetails({ ...botDetails, currentSession: message.currentSession });
-      // const tradeBot = tradeBots.findIndex(
-      //   (i) => message?.currentSession.tradeBotId == i.id
-      // );
 
-      // if (tradeBot > -1) {
-      //   const data = [...tradeBots];
-      //   if (
-      //     data[tradeBot].currentSession != null &&
-      //     data[tradeBot].currentSession.id == message.currentSession.id
-      //   )
-      //     return;
-
-      //   data[tradeBot] = {
-      //     ...data[tradeBot],
-      //     currentSession: message.currentSession,
-      //   };
-
-      //   setTradeBots(data);
-      // }
     }
-  });
-  // useSelector((state: any) => {
-  //   const message = state.signalrRMode.value;
-  //   if (!tradeBots || message == null) return;
-  //   if (message.lastOrder) {
-  //     const tradeBot = tradeBots.findIndex(
-  //       (i) => message?.lastOrder.tradeBotId == i.id
-  //     );
+  }, [tradeBots]);
 
-  //     if (tradeBot > -1) {
-  //       const data = [...tradeBots];
-  //       if (
-  //         data[tradeBot].lastOrder != null &&
-  //         data[tradeBot].lastOrder.id == message.lastOrder.id
-  //       )
-  //         return;
-
-  //       data[tradeBot] = {
-  //         ...data[tradeBot],
-  //         lastOrder: message.lastOrder,
-  //       };
-  //       dispatch(changeUserTradeBotsState(data));
-  //     }
-  //   }
-  //   if (message.currentSession) {
-  //     const tradeBot = tradeBots.findIndex(
-  //       (i) => message?.currentSession.tradeBotId == i.id
-  //     );
-
-  //     if (tradeBot > -1) {
-  //       const data = [...tradeBots];
-  //       if (
-  //         data[tradeBot].currentSession != null &&
-  //         data[tradeBot].currentSession.id == message.currentSession.id
-  //       )
-  //         return;
-
-  //       data[tradeBot] = {
-  //         ...data[tradeBot],
-  //         currentSession: message.currentSession,
-  //       };
-  //       dispatch(changeUserTradeBotsState(data));
-  //     }
-  //   }
-  // });
-
-  // useSelector((state: any) => {
-  //   const message = state.signalrRMode.value;
-
-  //   if (!botDetails || message == null) return;
-
-  //   if (message.lastOrder && message.lastOrder.tradeBotId == botDetails.id) {
-  //     if (botDetails.id == message.lastOrder.tradeBotId) {
-  //       if (botDetails.lastOrder == null) {
-  //         botDetails.lastOrder = message.lastOrder;
-  //         setBotDetails(botDetails);
-  //       }
-  //       if (message.lastOrder.id != botDetails.lastOrder.id) {
-  //         botDetails.lastOrder = message.lastOrder;
-  //         setBotDetails(botDetails);
-  //       }
-  //     }
-  //   }
-  //   if (
-  //     message.currentSession &&
-  //     botDetails.id == message.currentSession.tradeBotId
-  //   ) {
-  //     if (botDetails.id == message.currentSession.tradeBotId) {
-  //       if (botDetails.currentSession == null) {
-  //         botDetails.currentSession = message.currentSession;
-  //         setBotDetails(botDetails);
-  //       }
-  //       if (message.currentSession.id != botDetails.currentSession.id) {
-  //         botDetails.currentSession = message.currentSession;
-  //         setBotDetails(botDetails);
-  //       }
-  //     }
-  //   }
-  // });
 
   const onAddTradeBot = (showModal, newBot: any = null) => {
     setShowModal(showModal)
-    if(newBot != null) {
-      setBotDetails({...botDetails, ...newBot})
+    if (newBot != null) {
+      setBotDetails({ ...botDetails, ...newBot })
     }
-    
+
   }
 
   const [showModal, setShowModal] = useState(false);
@@ -295,7 +168,19 @@ export default function TradeBotDetails() {
                 </div>
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">
-                    Current Peak
+                    Current
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900">
+                    <p>
+                      {botDetails.currentSession?.percent.toFixed(2)}% ( $
+                      {botDetails.currentSession?.price.toFixed(2)})
+                    </p>
+                  </dd>
+                </div>
+
+                <div className="sm:col-span-1">
+                  <dt className="text-sm font-medium text-gray-500">
+                    Peak
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900">
                     <p>
@@ -312,17 +197,6 @@ export default function TradeBotDetails() {
                   </dd>
                 </div>
 
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">
-                    Current Target
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    <p>
-                      {botDetails.currentSession?.targetPercent.toFixed(2)}% ( $
-                      {botDetails.currentSession?.targetPrice.toFixed(2)})
-                    </p>
-                  </dd>
-                </div>
 
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">Funds</dt>
