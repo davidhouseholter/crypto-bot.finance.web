@@ -32,13 +32,7 @@ export default function Home() {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.userProfileMode.value);
   const router = useRouter();
-  // const user = {
-  //   name: 'Chelsea Hagon',
-  //   email: 'chelsea.hagon@example.com',
-  //   role: 'Human Resources Manager',
-  //   imageUrl:
-  //     'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  // }
+console.log('home')
 
 
   const stats = [
