@@ -10,6 +10,8 @@ export interface AuthContext {
     user: any | undefined;
     setUser: (p: any | undefined) => void;
     tradeBots: any[];
+    setTradeBots: (p: any | undefined) => void;
+
 }
 
 // Provider hook that creates auth object and handles state
@@ -31,27 +33,16 @@ export function useProvideAuth(): AuthContext {
             })
             .withAutomaticReconnect()
             .build();
-        //   const callbacks = withCallbacks()
-        //     .add('TradeBotSessionUpdate', (msg: string) => (dispatch) => {
-        //       console.log('TradeBotSessionUpdate', msg)
-        //       //dispatch(onUpdateSignarState(msg));
-        //     })
-        //     .add('TradeBotOrderUpdate', (msg: string) => (dispatch) => {
-        //       console.log('TradeBotOrderUpdate', msg)
-        //       //dispatch(onUpdateOrderSignarState(msg));
-        //     });
-
         setConnection(connection);
     }, []);
-    console.log()
     useEffect(() => {
         if (connection) {
             connection.start()
                 .then(result => {
-                    console.log('Connected!');
+                    //console.log('Connected!');
 
                     connection.on('TradeBotSessionUpdate', message => {
-                        console.log('TradeBotSessionUpdate', message)
+                        //console.log('TradeBotSessionUpdate', message)
                         const tradeBot = tradeBotsRef.current.findIndex(
                             (i) => message?.currentSession.tradeBotId == i.id
                         );
@@ -103,83 +94,18 @@ export function useProvideAuth(): AuthContext {
     useEffect(() => {
         const fetchData = async () => {
             const bots = await getUserTradeBots();
-            console.log(bots)
             // dispatch(changeUserTradeBotsState(bots));
             setTradeBots(bots);
-            //init = true;
         };
-        // if (userTradeBots != null) {
-        //   setTradeBots(userTradeBots);
-        // } else {
-        //   fetchData();
-        // }
-        // const {addtest} = router.query;
-        // if(addtest &&  userProfile){
-        //   //router.replace('/trade-bots', undefined, { shallow: true });
-        //   setTradeWalletData(userProfile.wallets[0]);
-        //   setShowModal(true);
-        // }
+    
         fetchData();
     }, []);
-
-
-    //   useSelector((state: any) => {
-    //     const message = state.signalrRMode.value;
-    //     if(!tradeBots || message == null) return;
-    //     console.log(message.id)
-
-    //     if(message.lastOrder) {
-    //       const tradeBotIdx = tradeBots.findIndex(
-    //         (i) => message?.lastOrder.tradeBotId == i.id
-    //       );
-
-    //       if (tradeBotIdx > -1) {
-
-    //         const data = [...tradeBots];
-    //         if (
-    //           data[tradeBotIdx].lastOrder != null &&
-    //           data[tradeBotIdx].lastOrder.id == message.lastOrder.id
-    //         )
-    //           return;
-
-    //         data[tradeBotIdx] = {
-    //           ...data[tradeBotIdx],
-    //           lastOrder: message.lastOrder,
-    //         };
-    //         setTradeBots(data);
-    //         dispatch(changeUserTradeBotsState(data));
-    //       }
-    //     }
-    //     if(message.currentSession) {
-    //       const tradeBot = tradeBots.findIndex(
-    //         (i) => message?.currentSession.tradeBotId == i.id
-    //       );
-
-    //       if (tradeBot > -1) {
-    //         const data = [...tradeBots];
-    //         if (
-    //           data[tradeBot].currentSession != null &&
-    //           data[tradeBot].currentSession.id == message.currentSession.id
-    //         )
-    //           return;
-
-    //         data[tradeBot] = {
-    //           ...data[tradeBot],
-    //           currentSession: message.currentSession,
-    //         };
-    //         dispatch(changeUserTradeBotsState(data));
-
-    //         setTradeBots(data);
-    //       }
-    //     }
-
-    //   });
-
 
     return {
         user,
         setUser,
-        tradeBots
+        tradeBots,
+        setTradeBots
     };
 }
 

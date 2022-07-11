@@ -10,7 +10,6 @@ import { changeTradePairState } from "../../pkg/redux/reducers/tradePairs";
 import Notiflix, { Confirm } from "notiflix";
 import { useRouter } from "next/router";
 
-import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
 import {
   deleteUserTradeBot,
   getTradePairs,
@@ -22,6 +21,7 @@ import {
 import { Popover } from "@headlessui/react";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import Image from "next/image";
+import { useAuth } from "../../pkg/providers/Auth";
 
 export default function AddTradeBotModal({
   setShowModal,
@@ -34,11 +34,14 @@ export default function AddTradeBotModal({
     return classes.filter(Boolean).join(" ");
   }
 
+  const { tradeBots, setTradeBots } = useAuth();
+
+
   const router = useRouter();
 
-  const userTradeBots = useSelector(
-    (state: any) => state.userTradeBotsMode.value as any[]
-  );
+  // const tradeBots = useSelector(
+  //   (state: any) => state.tradeBotsMode.value as any[]
+  // );
 
   const [coins, setCoins] = useState<any[]>();
   const [selected, setSelected] = useState(
@@ -98,20 +101,18 @@ export default function AddTradeBotModal({
     setLoading(true);
     if (newTradeBot.id == 0) {
       const result = await postStartUserTradeBot(newTradeBot);
-      dispatch(changeUserTradeBotsState([...userTradeBots, result.data]));
+      setTradeBots([...tradeBots, result.data]);
       setLoading(false);
 
       setShowModal(false);
     } else {
       const result = await putStartUserTradeBot(newTradeBot);
-      if (userTradeBots) {
+      if (tradeBots) {
 
-        dispatch(
-          changeUserTradeBotsState([
-            ...userTradeBots.filter((i) => i.id != newTradeBot.id),
-            result.data,
-          ])
-        );
+        setTradeBots([
+          ...tradeBots.filter((i) => i.id != newTradeBot.id),
+          result.data,
+        ])
       }
       setLoading(false);
 
@@ -128,13 +129,11 @@ export default function AddTradeBotModal({
       async () => {
         try {
           const result = await stopUserTradeBot(newTradeBot);
-          if (userTradeBots) {
-            dispatch(
-              changeUserTradeBotsState([
-                ...userTradeBots.filter((i) => i.id != newTradeBot.id),
-                { ...newTradeBot, active: false },
-              ])
-            );
+          if (tradeBots) {
+            setTradeBots([
+              ...tradeBots.filter((i) => i.id != newTradeBot.id),
+              { ...newTradeBot, active: false },
+            ])
           }
 
           setShowModal(false, { ...newTradeBot, active: false });
@@ -161,13 +160,11 @@ export default function AddTradeBotModal({
       async () => {
         try {
           const result = await startUserTradeBot(newTradeBot);
-          if (userTradeBots) {
-            dispatch(
-              changeUserTradeBotsState([
-                ...userTradeBots.filter((i) => i.id != newTradeBot.id),
-                { ...newTradeBot, active: true },
-              ])
-            );
+          if (tradeBots) {
+            setTradeBots([
+              ...tradeBots.filter((i) => i.id != newTradeBot.id),
+              { ...newTradeBot, active: true },
+            ])
           }
           setShowModal(false, { ...newTradeBot, active: true });
         } catch (e) {
@@ -194,11 +191,9 @@ export default function AddTradeBotModal({
       async () => {
         try {
           const result = await deleteUserTradeBot(newTradeBot);
-          dispatch(
-            changeUserTradeBotsState([
-              ...userTradeBots.filter((i) => i.id != newTradeBot.id)
-            ])
-          );
+          setTradeBots([
+            ...tradeBots.filter((i) => i.id != newTradeBot.id)
+          ])
           setShowModal(false);
           router.push('/trade-bots')
         } catch {
