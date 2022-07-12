@@ -85,6 +85,9 @@ export function useProvideAuth(): AuthContext {
                             setTradeBots(data);
                             dispatch(changeUserTradeBotsState(data));
                         }
+                        else {
+                            
+                        }
                     });
                 })
                 .catch(e => console.log('Connection failed: ', e));

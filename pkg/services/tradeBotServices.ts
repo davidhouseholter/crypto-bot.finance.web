@@ -60,3 +60,7 @@ export function stopUserTradeBot(tradeBot: any) {
 export function deleteUserTradeBot(tradeBot: any) {
   return axios.delete(`${api}/user/trade-bot/${tradeBot.id}`, {withCredentials: true});
 }
+
+export function  createTradeBotOrder(tradeBot: any) {
+  return axios.post<any>(`${api}/user/trade-bot/${tradeBot.id}/orders/create`, null, {withCredentials: true})
+}

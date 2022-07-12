@@ -1,13 +1,16 @@
 import { useRouter } from "next/router";
+import { Confirm, Notify } from "notiflix";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddTradeBotModal from "../../components/tradebots/add-trade-bot";
 import { useAuth } from "../../pkg/providers/Auth";
 import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
 import {
+  createTradeBotOrder,
   getUserTradeBotById,
   getUserTradeBotOrdersById,
   getUserTradeBots,
+  stopUserTradeBot,
 } from "../../pkg/services/tradeBotServices";
 
 export default function TradeBotDetails() {
@@ -83,7 +86,27 @@ export default function TradeBotDetails() {
     }
 
   }
-
+  const onCreateOrder = () => {
+    Confirm.show(
+      'Create New Order',
+      'This will create a new market order at the current price fopposite of the last order. It will sell the last units bought or but for the funds of the bot.',
+      'Yes',
+      'No',
+      async () => {
+        try {
+          const result = await createTradeBotOrder(botDetails);
+          if (result) {
+            console.log(result);
+          }
+          const orders = await getUserTradeBotOrdersById(tradeBotId);
+          setTradeBotOrders(orders);
+          setShowModal(false);
+        } catch (e) {
+          Notify.failure('Request Failed');
+        }
+      }, () => { }, { },
+    );
+  };
   const [showModal, setShowModal] = useState(false);
   const userProfile = useSelector((state: any) => state.userProfileMode.value);
 
@@ -216,6 +239,7 @@ export default function TradeBotDetails() {
                         className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Edit</button>
                       {/* (click)="onCreateTradeBotOrder()" */}
                       <button type="button"
+                        onClick={() => onCreateOrder()}
                         className="mt-4 w-full rounded-md border border-transparent shadow-sm hover:bg-blue-500 bg-gray-300">Order</button>
                     </div>
                   </dd>
