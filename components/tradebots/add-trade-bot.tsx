@@ -35,14 +35,7 @@ export default function AddTradeBotModal({
   }
 
   const { tradeBots, setTradeBots } = useAuth();
-
-
   const router = useRouter();
-
-  // const tradeBots = useSelector(
-  //   (state: any) => state.tradeBotsMode.value as any[]
-  // );
-
   const [coins, setCoins] = useState<any[]>();
   const [selected, setSelected] = useState(
     tradeWalletData ? tradeWalletData : wallets[0]
@@ -101,6 +94,7 @@ export default function AddTradeBotModal({
     setLoading(true);
     if (newTradeBot.id == 0) {
       const result = await postStartUserTradeBot(newTradeBot);
+      if(!tradeBots) setTradeBots([result.data]);
       setTradeBots([...tradeBots, result.data]);
       setLoading(false);
 

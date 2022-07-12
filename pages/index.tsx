@@ -32,9 +32,6 @@ export default function Home() {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.userProfileMode.value);
   const router = useRouter();
-console.log('home')
-
-
   const stats = [
     { label: `Pool${user?.wallets.length > 1 ? 's' : ''}`, value: user?.wallets.length ?? 0 },
     { label: `Bot${user?.bots?.length > 1 ? 's' : ''}`, value: user?.bots?.length ?? 0 },

@@ -20,9 +20,11 @@ export default function TradeBotDetails() {
 
   // const tradeBotsData = useSelector((state: any) => state.userTradeBotsMode?.value);
   const tradeBotId = router.query.tradeBotId ? +router.query.tradeBotId : 0;
-  const match = tradeBots.find(i => i.id == tradeBotId);
-  const [botDetails, setBotDetails] = useState<any>(match ? match : null);
-
+  // console.log(tradeBot)
+  // const match = tradeBots.find(i => i.id == tradeBotId);
+  const [botDetails, setBotDetails] = useState<any>(null);
+  useEffect(() => {
+  }, [tradeBotId]);
   useEffect(() => {
     const fetchTradeBotData = async () => {
       const bot = await getUserTradeBotById(tradeBotId);
