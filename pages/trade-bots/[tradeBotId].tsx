@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { Confirm, Notify } from "notiflix";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AdvancedChart } from "react-tradingview-embed";
 import AddTradeBotModal from "../../components/tradebots/add-trade-bot";
 import { useAuth } from "../../pkg/providers/Auth";
 import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
@@ -170,23 +171,21 @@ export default function TradeBotDetails() {
                     Total Orders
                   </dt>
                   <dd className="mt-1 ">
-                    {botDetails.totalOrders}{" "}
-                    <p className="text-sm text-gray-900">
-                      {" "}
+                    {botDetails.totalOrders}
+                    {/* <p className="text-sm text-gray-900">
                       {new Date(
                         botDetails.lastOrder?.dateCreated + "Z"
                       ).toLocaleString()}
-                    </p>
+                    </p> */}
                   </dd>
                 </div>
                 <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">
+                  <dt className="text-sm font-medium text-black-500">
                     Current
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900">
                     <p>
-                      {botDetails.currentSession?.percent.toFixed(2)}% ( $
-                      {})
+                      {botDetails.currentSession?.percent.toFixed(2)}%
                     </p>
                   </dd>
                 </div>
@@ -252,7 +251,6 @@ export default function TradeBotDetails() {
                     </p>
                   </dd>
                 </div>
-
                 <div className="sm:col-span-6">
                   <dt className="text-sm font-medium text-gray-500">Orders</dt>
                   <dd className="mt-1 text-sm text-gray-900">

@@ -80,6 +80,7 @@ export function useProvideAuth(): AuthContext {
                 
                             data[tradeBotIdx] = {
                                 ...data[tradeBotIdx],
+                                totalOrders: data[tradeBotIdx].totalOrders + 1,
                                 lastOrder: message.lastOrder,
                             };
                             setTradeBots(data);
