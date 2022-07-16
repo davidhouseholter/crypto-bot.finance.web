@@ -26,6 +26,7 @@
     "react-redux": "^8.0.2",
     "react-signalr": "^0.2.11",
     "react-toastify": "^9.0.1",
+    "react-ts-tradingview-widgets": "^1.0.11",
     "redux-signalr": "^1.2.0",
     "styled-components": "^5.3.5"
   },

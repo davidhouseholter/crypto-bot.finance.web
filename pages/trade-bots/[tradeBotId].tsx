@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { Confirm, Notify } from "notiflix";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AdvancedChart } from "react-tradingview-embed";
+import StockSnippet from "../../components/chart/stock-snippet";
 import AddTradeBotModal from "../../components/tradebots/add-trade-bot";
 import { useAuth } from "../../pkg/providers/Auth";
-import { changeUserTradeBotsState } from "../../pkg/redux/reducers/userTradeBots";
+import { AdvancedRealTimeChart, MiniChart, SingleTicker } from "react-ts-tradingview-widgets";
 import {
   createTradeBotOrder,
   getUserTradeBotById,
@@ -20,6 +20,7 @@ export default function TradeBotDetails() {
   const [isLoading, setLoading] = useState(false);
   const { tradeBots } = useAuth();
   const [tradeBot, setTradeBot] = useState<any>();
+  const [showChart, setShowChart] = useState<any>(false);
 
   const [tradeBotOrders, setTradeBotOrders] = useState<any[]>([]);
 
@@ -102,7 +103,31 @@ export default function TradeBotDetails() {
   };
   const [showModal, setShowModal] = useState(false);
   const userProfile = useSelector((state: any) => state.userProfileMode.value);
+  var studies = [
 
+    {
+      id: "IchimokuCloud@tv-basicstudies",
+      version: 2.0
+   
+    },
+
+   {
+     id: "MASimple@tv-basicstudies",
+     inputs: {
+       length: 365*2
+     }
+
+   },
+   {
+     id: "MASimple@tv-basicstudies",
+     inputs: {
+       length: 365
+     }
+
+   }
+
+
+ ];
   return (
     botDetails && (
       <>
@@ -119,23 +144,16 @@ export default function TradeBotDetails() {
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className=" overflow-hidden sm:rounded-lg">
             <div className="py-5">
-              <div className="flex ">
+            {/* <StockSnippet symbol={botDetails.productTicker}></StockSnippet>
+<SingleTicker symbol={botDetails.productTicker}></SingleTicker> */}
+            </div>
+            <section className="bg-white shadow-card border-t border-gray-200 px-4 py-5 sm:px-6">
+            <h4 className="text-sm font-medium text-gray-900 ltr:ml-3 rtl:mr-3 dark:text-white">{botDetails.coin}{botDetails.name != "" && (<>: {botDetails.name}</>)}</h4>
 
-                <div className="flex items-center gap-4 rounded-lg p-5 bg-white shadow-card dark:bg-light-dark lg:flex-row">
-                  <div className="w-full flex-col">
-                    <div className="mb-3 flex items-center">
-                      <Image
-                        src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/color/${`${botDetails.coin}`.toLowerCase()}.svg`}
-
-                        width="32px" height="32px"
-                      />
-                      <h4 className="text-sm font-medium text-gray-900 ltr:ml-3 rtl:mr-3 dark:text-white">{botDetails.coin}{botDetails.name != "" && (<>: {botDetails.name}</>)}</h4>
-                     
-                    </div>
-                    <p>${botDetails.currentSession?.price.toFixed(2)}</p>
-                  </div>
-                </div>
-                {!botDetails.active && (
+            <p className=" text-sm text-gray-500">
+                        Wallet: {botDetails.tradeWallet.name}
+                      </p>
+            {!botDetails.active && (
                   <div className="flex items-center gap-4 rounded-lg bg-white p-3 shadow-card dark:bg-light-dark lg:flex-row">
                     <div className="w-full flex-col">
                       <div className="mb-3 flex items-center">
@@ -148,24 +166,13 @@ export default function TradeBotDetails() {
                   </div>
 
                 )}
-
-                <div className="flex items-center gap-4 rounded-lg bg-white p-5 shadow-card dark:bg-light-dark lg:flex-row">
-                  <div className="w-full flex-col">
-                    <div className="mb-3 flex items-center">
-                      <p className=" text-sm text-gray-500">
-                        Wallet: {botDetails.tradeWallet.name}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-
-
-              </div>
-            </div>
-
-            <section className="bg-white shadow-card border-t border-gray-200 px-4 py-5 sm:px-6">
               <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-6">
+                <div  className="sm:col-span-2">
+                <MiniChart symbol={botDetails.productTicker} dateRange="1D" />
+                <button type="button"
+                        onClick={() => { setShowChart(true) }}
+                        className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Full Chart</button>
+                </div>
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-black-500">
                     Total Orders
@@ -178,8 +185,6 @@ export default function TradeBotDetails() {
                       ).toLocaleString()}
                     </p> */}
                   </dd>
-                </div>
-                <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-black-500">
                     Current
                   </dt>
@@ -188,10 +193,7 @@ export default function TradeBotDetails() {
                       {botDetails.currentSession?.percent.toFixed(2)}%
                     </p>
                   </dd>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">
+                  <dt className="text-sm font-medium text-black-500">
                     Peak
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900">
@@ -208,7 +210,7 @@ export default function TradeBotDetails() {
 
                   </dd>
                 </div>
-
+           
 
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">Funds</dt>
@@ -220,11 +222,9 @@ export default function TradeBotDetails() {
                   <dt className="text-sm font-medium text-gray-500">Actions</dt>
                   <dd className="mt-1 text-sm text-gray-900">
                     <div>
-                      {/*  */}
                       <button type="button"
                         onClick={() => { setShowModal(true) }}
                         className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Edit</button>
-                      {/* (click)="onCreateTradeBotOrder()" */}
                       <button type="button"
                         onClick={() => onCreateOrder()}
                         className="mt-4 w-full rounded-md border border-transparent shadow-sm hover:bg-blue-500 bg-gray-300">Order</button>
@@ -377,6 +377,15 @@ export default function TradeBotDetails() {
                 </div>
               </dl>
             </section>
+            {showChart && (<>
+              <div  style={{height: "90vh"}}>
+
+            <AdvancedRealTimeChart autosize studies={studies} theme="dark"  symbol={botDetails.productTicker}></AdvancedRealTimeChart>
+
+            </div>
+
+            </>)}
+          
           </div>
           {/* <div className="grid grid-cols-2">
             <div className="">
