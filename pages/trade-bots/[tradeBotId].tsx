@@ -70,11 +70,9 @@ export default function TradeBotDetails() {
       }
     }
     if (message.currentSession) {
-      debugger
       if (botDetails.currentSession == null || message.currentSession.id != botDetails.currentSession.id) {
         setBotDetails({ ...botDetails, currentSession: message.currentSession });
       }
-
     }
   }, [tradeBots]);
 
