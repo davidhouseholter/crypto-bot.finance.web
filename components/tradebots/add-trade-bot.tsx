@@ -79,6 +79,7 @@ export default function AddTradeBotModal({
     }
   }, [coinPairs, dispatch]);
   const startNewTradeBot = async () => {
+
     if (loading) {
       return;
     }
@@ -94,7 +95,7 @@ export default function AddTradeBotModal({
     setLoading(true);
     if (newTradeBot.id == 0) {
       const result = await postStartUserTradeBot(newTradeBot);
-      if(!tradeBots) setTradeBots([result.data]);
+      if (!tradeBots) setTradeBots([result.data]);
       setTradeBots([...tradeBots, result.data]);
       setLoading(false);
 
@@ -654,8 +655,17 @@ export default function AddTradeBotModal({
                   <button
                     type="button"
                     className="inline-flex mb-4 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
-                    onClick={() => startNewTradeBot()}
-                  >
+                    onClick={() =>
+                      Confirm.show(
+                        'Stop Bot',
+                        'Do you want to start the bot?',
+                        'Yes',
+                        'No',
+                        async () => {
+                          try {
+                            startNewTradeBot()
+                          } catch (e) {}
+                        },  () => {  }, { }, )}>
                     {newTradeBot.id <= 0 ? "Start" : "Save"}
                   </button>
                   <button

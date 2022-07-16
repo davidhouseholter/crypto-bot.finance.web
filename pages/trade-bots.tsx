@@ -5,7 +5,7 @@ import AddTradeWalletModal, {
   TradeWalletViewModel,
 } from "../components/tradebots/add-trade-wallet";
 import { useRouter } from "next/router";
-import { BeakerIcon } from "@heroicons/react/outline";
+import { BeakerIcon, CurrencyDollarIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import { useAuth } from "../pkg/providers/Auth";
 
@@ -157,10 +157,8 @@ export default function TradeBotsPage() {
                       }}
                     >
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6 w-1/6">
-                        <p className="flex"> {bot.test && (<BeakerIcon className="h-5 w-5 text-blue-500" />)} {bot.name}</p>
-                        <span>
 
-                          <br></br>
+                        <span>
                           {!bot.active && "stopped"}
                           {/*
                             <i *ngIf="!bot.active" class="red icon ion-md-close-circle-outline"></i>
@@ -169,14 +167,22 @@ export default function TradeBotsPage() {
                                 class="ms-2">Pending</span></i> */}
                         </span>
                         {/* `https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/${style}/${name}.svg`; */}
-                        <p>
+                        <p className="flex">
+                          <span>
 
-                          <Image
-                            src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/color/${`${bot.coin}`.toLowerCase()}.svg`}
+                            <Image
+                              src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/color/${`${bot.coin}`.toLowerCase()}.svg`}
 
-                            width="32px" height="32px"
-                          />
-                          {bot.coin}</p>
+                              width="32px" height="32px"
+                            />
+
+                           {/* <p></p> */}
+                          </span>
+                          <span className="ml-3">
+
+                          </span>
+                          <span className="flex"> {bot.test && (<BeakerIcon className="h-5 w-5 text-blue-500" />)} {bot.coin}{bot.name != "" && (<>: {bot.name}</>)}</span>
+                        </p>
                       </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         {bot.currentSession == null ? (
@@ -202,18 +208,37 @@ export default function TradeBotsPage() {
                                           </span>
                                         )}
                                       {bot.currentSession?.percent < 0 && (
-                                        <span className="">
+                                        <span className="text-red-500">
                                           {bot.currentSession?.percent.toFixed(2)}%
                                         </span>
                                       )}
                                     </>
                                   ) : (
                                     <>
-                                      {bot.currentSession?.percent < 0 && (
+                                      {/* {bot.currentSession?.percent < 0 && (
                                         <>  {-1 * bot.currentSession?.percent.toFixed(2)}% <span className="text-red-500">(above sell)</span></>
                                       )}
                                       {bot.currentSession?.percent >= 0 && (
                                         <>  {bot.currentSession?.percent.toFixed(2)}%</>
+                                      )} */}
+
+                                      {bot.currentSession.percent >
+                                        bot.currentSession?.targetPercent && (
+                                          <span className="text-green-500 flex ">
+                                            <CurrencyDollarIcon className="h-5 w-5 text-blue-500 mr-2"></CurrencyDollarIcon>   {bot.currentSession?.percent.toFixed(2)}%
+                                          </span>
+                                        )}
+                                      {bot.currentSession?.percent >= 0 &&
+                                        bot.currentSession?.percent <=
+                                        bot.currentSession?.targetPercent && (
+                                          <span className="text-yellow-500">
+                                            {bot.currentSession?.percent.toFixed(2)}%
+                                          </span>
+                                        )}
+                                      {bot.currentSession?.percent < 0 && (
+                                        <span className="text-red-500">
+                                          {bot.currentSession?.percent.toFixed(2)}% (Above)
+                                        </span>
                                       )}
 
                                     </>

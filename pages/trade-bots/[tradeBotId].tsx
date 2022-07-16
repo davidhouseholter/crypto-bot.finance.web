@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { Confirm, Notify } from "notiflix";
 import { useState, useEffect } from "react";
@@ -31,15 +32,8 @@ export default function TradeBotDetails() {
   useEffect(() => {
     const fetchTradeBotData = async () => {
       const bot = await getUserTradeBotById(tradeBotId);
-      // if(botDetails) {
-      //   setBotDetails({...bot, lastOrder: botDetails.lastOrder , currentSession: botDetails.currentSession});
-      // }
-      // else {
-
-      // }
       setBotDetails(bot);
       fetchTradeBotOrderData();
-
     };
     const fetchTradeBotOrderData = async () => {
       const orders = await getUserTradeBotOrdersById(tradeBotId);
@@ -102,7 +96,7 @@ export default function TradeBotDetails() {
         } catch (e) {
           Notify.failure('Request Failed');
         }
-      }, () => { }, { },
+      }, () => { }, {},
     );
   };
   const [showModal, setShowModal] = useState(false);
@@ -122,58 +116,54 @@ export default function TradeBotDetails() {
           </>
         ) : null}
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6">
+          <div className=" overflow-hidden sm:rounded-lg">
+            <div className="py-5">
               <div className="flex ">
-                <h3 className="text-xl leading-6 font-medium text-gray-900">
-                  {botDetails.name} {!botDetails.active && "(Stopped)"}
-                </h3>
-                {botDetails.lastOrder && botDetails.currentSession && (
-                  <span className="ml-2">
-                    <>
-                      {botDetails.lastOrder.orderSide == 1 ? (
-                        <>
-                          {botDetails.currentSession.percent >
-                            botDetails.currentSession?.targetPercent && (
-                              <span className="text-green-500">
-                                {botDetails.currentSession?.percent.toFixed(2)}%
-                              </span>
-                            )}
-                          {botDetails.currentSession?.percent >= 0 &&
-                            botDetails.currentSession?.percent <=
-                            botDetails.currentSession?.targetPercent && (
-                              <span className="">
-                                {botDetails.currentSession?.percent.toFixed(2)}%
-                              </span>
-                            )}
-                          {botDetails.currentSession?.percent < 0 && (
-                            <span className="">
-                              {botDetails.currentSession?.percent.toFixed(2)}%
-                            </span>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {botDetails.currentSession?.percent < 0 && (
-                            <>
-                              {-1 * botDetails.currentSession?.percent}%
-                              <span>(above sell)</span>
-                            </>
-                          )}
-                          {botDetails.currentSession?.percent >= 0 && (
-                            <> {botDetails.currentSession?.percent}%</>
-                          )}
-                        </>
-                      )}
-                    </>
-                  </span>
+
+                <div className="flex items-center gap-4 rounded-lg p-5 bg-white shadow-card dark:bg-light-dark lg:flex-row">
+                  <div className="w-full flex-col">
+                    <div className="mb-3 flex items-center">
+                      <Image
+                        src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/color/${`${botDetails.coin}`.toLowerCase()}.svg`}
+
+                        width="32px" height="32px"
+                      />
+                      <h4 className="text-sm font-medium text-gray-900 ltr:ml-3 rtl:mr-3 dark:text-white">{botDetails.coin}{botDetails.name != "" && (<>: {botDetails.name}</>)}</h4>
+                     
+                    </div>
+                    <p>${botDetails.currentSession?.price.toFixed(2)}</p>
+                  </div>
+                </div>
+                {!botDetails.active && (
+                  <div className="flex items-center gap-4 rounded-lg bg-white p-3 shadow-card dark:bg-light-dark lg:flex-row">
+                    <div className="w-full flex-col">
+                      <div className="mb-3 flex items-center">
+
+                        <p className=" text-sm text-gray-500">
+                          Stopped
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                 )}
+
+                <div className="flex items-center gap-4 rounded-lg bg-white p-5 shadow-card dark:bg-light-dark lg:flex-row">
+                  <div className="w-full flex-col">
+                    <div className="mb-3 flex items-center">
+                      <p className=" text-sm text-gray-500">
+                        Wallet: {botDetails.tradeWallet.name}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+
+
               </div>
-              <p className=" text-sm text-gray-500">
-                Wallet: {botDetails.tradeWallet.name}
-              </p>
             </div>
-            <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+
+            <section className="bg-white shadow-card border-t border-gray-200 px-4 py-5 sm:px-6">
               <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-black-500">
@@ -196,7 +186,7 @@ export default function TradeBotDetails() {
                   <dd className="mt-1 text-sm text-gray-900">
                     <p>
                       {botDetails.currentSession?.percent.toFixed(2)}% ( $
-                      {botDetails.currentSession?.price.toFixed(2)})
+                      {})
                     </p>
                   </dd>
                 </div>
@@ -388,7 +378,7 @@ export default function TradeBotDetails() {
                   </dd>
                 </div>
               </dl>
-            </div>
+            </section>
           </div>
           {/* <div className="grid grid-cols-2">
             <div className="">
