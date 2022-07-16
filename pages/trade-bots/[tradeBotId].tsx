@@ -103,12 +103,13 @@ export default function TradeBotDetails() {
   };
   const [showModal, setShowModal] = useState(false);
   const userProfile = useSelector((state: any) => state.userProfileMode.value);
-  var studies = [
+  const studies : any[] = [
 
     {
       id: "IchimokuCloud@tv-basicstudies",
-      version: 2.0
-   
+      inputs: {
+        length: 365*2
+      }
     },
 
    {
