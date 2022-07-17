@@ -2,11 +2,11 @@ import Image from 'next/image'
 
 import { Button } from './Button'
 import { Container } from './Container'
-import logoNet from '../images/logos/Microsoft_Net_logo.svg'
-import redisLogo from '../images/logos/redis-official.svg'
-import logoCoinbase from '../images/logos/Coinbase.svg'
-import logoGoogleCloud from '../images/logos/Google_Cloud_logo.svg'
-import logoK8s from '../images/logos/Kubernetes_logo.svg'
+import logoNet from '../../../public/about/logos/Microsoft_NET_logo.svg'
+import redisLogo from '../../../public/about/logos/redis-official.svg'
+import logoCoinbase from '../../../public/about/logos/Coinbase.svg'
+import logoGoogleCloud from '../../../public/about/logos/Google_Cloud_logo.svg'
+import logoK8s from '../../../public/about/logos/Kubernetes_logo.svg'
 
 export function Hero() {
   return (

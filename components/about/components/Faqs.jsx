@@ -1,7 +1,6 @@
 import Image from 'next/image'
 
 import { Container } from './Container'
-import backgroundImage from '../images/background-faqs.jpg'
 
 const faqs = [
   [

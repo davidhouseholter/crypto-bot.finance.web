@@ -4,11 +4,10 @@ import { Tab } from '@headlessui/react'
 import clsx from 'clsx'
 
 import { Container } from './Container'
-import backgroundImage from '../images/background-features.jpg'
-import screenshotDashboard from '../images/screenshots/App-Dashboard.png'
-import screenshotTradeBotList from '../images/screenshots/App-TradeBot-List.png'
-import screenshotReporting from '../images/screenshots/reporting.png'
-import screenshotTradeBotDetails from '../images/screenshots/App-TradeBot-Details.png'
+import screenshotDashboard from '../../../public/about/screenshots/App-Dashboard.png'
+import screenshotTradeBotList from '../../../public/about/screenshots/App-TradeBot-List.png'
+import screenshotReporting from '../../../public/about/screenshots/reporting.png'
+import screenshotTradeBotDetails from '../../../public/about/screenshots/App-TradeBot-Details.png'
 
 const features = [
 

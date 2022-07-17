@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 import { Container } from './Container'
 import { ShieldExclamationIcon } from '@heroicons/react/outline'
 import { GridPattern } from '../../about1/components/GridPattern'
