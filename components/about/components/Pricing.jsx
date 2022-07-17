@@ -123,6 +123,7 @@ export function Pricing() {
             href="/sign-up"
             features={[
               'Run 5 active trade bots',
+              'Run 5 active test bots',
               'Connect up to 2 exchanges',
               'Trade up to $10,000 per month',
             ]}
@@ -135,6 +136,7 @@ export function Pricing() {
             href="/sign-up"
             features={[
               'Run 25 active trade bots',
+              'Unlimited test trade bots',
               'Connect unlimited number exchanges',
               'Trade up to $100,000 per month',
             ]}
@@ -146,8 +148,9 @@ export function Pricing() {
             href="/sign-up"
             features={[
               'Run 100 active trade bots',
+              'Unlimited test trade bots',
               'Connect unlimited number exchanges',
-              'Trade up to $10,000,000 per month',
+              'Trade up to $1,000,000 per month',
             
             ]}
           />

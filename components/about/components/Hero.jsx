@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 import { Button } from './Button'
 import { Container } from './Container'
-import logoNet from '../images/logos/Microsoft_.Net_logo.svg'
+import logoNet from '../images/logos/Microsoft_Net_logo.svg'
 import redisLogo from '../images/logos/redis-official.svg'
 import logoCoinbase from '../images/logos/Coinbase.svg'
 import logoGoogleCloud from '../images/logos/Google_Cloud_logo.svg'
