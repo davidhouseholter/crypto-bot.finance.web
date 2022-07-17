@@ -25,6 +25,17 @@
   }
 }
 
+.active-sub-nav{
+  border-bottom: 4px solid rgb(0, 119, 255);
+  background-color: rgba(0, 119, 255, .1)
+  
+}
+.sub-nav:hover{
+  border-bottom: 4px solid rgb(0, 119, 255);
+  background-color: rgba(0, 119, 255, .5);
+  cursor: pointer;
+}
+
 /* Toggle B */
 input:checked ~ .dot {
   transform: translateX(100%);

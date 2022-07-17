@@ -14,6 +14,7 @@ import {
   getUserTradeBots,
   stopUserTradeBot,
 } from "../../pkg/services/tradeBotServices";
+import { BellIcon, ChartBarIcon, CodeIcon, CubeIcon, CurrencyDollarIcon, MapIcon, StatusOnlineIcon } from "@heroicons/react/outline";
 
 export default function TradeBotDetails() {
   const router = useRouter();
@@ -103,32 +104,32 @@ export default function TradeBotDetails() {
   };
   const [showModal, setShowModal] = useState(false);
   const userProfile = useSelector((state: any) => state.userProfileMode.value);
-  const studies : any[] = [
+  const studies: any[] = [
 
     {
       id: "IchimokuCloud@tv-basicstudies",
       inputs: {
-        length: 365*2
+        length: 365 * 2
       }
     },
 
-   {
-     id: "MASimple@tv-basicstudies",
-     inputs: {
-       length: 365*2
-     }
+    {
+      id: "MASimple@tv-basicstudies",
+      inputs: {
+        length: 365 * 2
+      }
 
-   },
-   {
-     id: "MASimple@tv-basicstudies",
-     inputs: {
-       length: 365
-     }
+    },
+    {
+      id: "MASimple@tv-basicstudies",
+      inputs: {
+        length: 365
+      }
 
-   }
+    }
 
 
- ];
+  ];
   return (
     botDetails && (
       <>
@@ -145,38 +146,38 @@ export default function TradeBotDetails() {
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className=" overflow-hidden sm:rounded-lg">
             <div className="py-5">
-            {/* <StockSnippet symbol={botDetails.productTicker}></StockSnippet>
+              {/* <StockSnippet symbol={botDetails.productTicker}></StockSnippet>
 <SingleTicker symbol={botDetails.productTicker}></SingleTicker> */}
             </div>
             <section className="bg-white shadow-card border-t border-gray-200 px-4 py-5 sm:px-6">
-            <h4 className="text-sm font-medium text-gray-900 ltr:ml-3 rtl:mr-3 dark:text-white">{botDetails.coin}{botDetails.name != "" && (<>: {botDetails.name}</>)}</h4>
+              <h4 className="text-sm font-medium text-gray-900 ltr:ml-3 rtl:mr-3 dark:text-white">{botDetails.coin}{botDetails.name != "" && (<>: {botDetails.name}</>)}</h4>
 
-            <p className=" text-sm text-gray-500">
-                        Wallet: {botDetails.tradeWallet.name}
+              <p className=" text-sm text-gray-500">
+                Wallet: {botDetails.tradeWallet.name}
+              </p>
+              {!botDetails.active && (
+                <div className="flex items-center gap-4 rounded-lg bg-white p-3 shadow-card dark:bg-light-dark lg:flex-row">
+                  <div className="w-full flex-col">
+                    <div className="mb-3 flex items-center">
+
+                      <p className=" text-sm text-gray-500">
+                        Stopped
                       </p>
-            {!botDetails.active && (
-                  <div className="flex items-center gap-4 rounded-lg bg-white p-3 shadow-card dark:bg-light-dark lg:flex-row">
-                    <div className="w-full flex-col">
-                      <div className="mb-3 flex items-center">
-
-                        <p className=" text-sm text-gray-500">
-                          Stopped
-                        </p>
-                      </div>
                     </div>
                   </div>
+                </div>
 
-                )}
-              <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-6">
-                <div  className="sm:col-span-2">
-                <MiniChart symbol={botDetails.productTicker} dateRange="1D" />
-                <button type="button"
-                        onClick={() => { setShowChart(true) }}
-                        className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Full Chart</button>
+              )}
+              <dl className="grid grid-cols-3 gap-x-4 gap-y-16 ">
+                <div className="col-span-1">
+                  <MiniChart symbol={botDetails.productTicker} dateRange="1D" />
+                  <button type="button"
+                    onClick={() => { setShowChart(true) }}
+                    className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Full Chart</button>
                 </div>
                 <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-black-500">
-                    Total Orders
+                  <dt className="text-sm font-medium text-black-500 flex">
+                    <BellIcon className="h-5 w-5 text-blue-500 mr-2" /> Total Orders
                   </dt>
                   <dd className="mt-1 ">
                     {botDetails.totalOrders}
@@ -186,16 +187,16 @@ export default function TradeBotDetails() {
                       ).toLocaleString()}
                     </p> */}
                   </dd>
-                  <dt className="text-sm font-medium text-black-500">
-                    Current
+                  <dt className="text-sm font-medium text-black-500 flex">
+                    <StatusOnlineIcon className="h-5 w-5 text-blue-500 mr-2" /> Current
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900">
                     <p>
                       {botDetails.currentSession?.percent.toFixed(2)}%
                     </p>
                   </dd>
-                  <dt className="text-sm font-medium text-black-500">
-                    Peak
+                  <dt className="text-sm font-medium text-black-500 flex">
+                    <ChartBarIcon className="h-5 w-5 text-blue-500 mr-2" /> Peak
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900">
                     <p>
@@ -204,39 +205,46 @@ export default function TradeBotDetails() {
                     </p>
                     {botDetails.currentSession?.allowance > 0 && (
                       <p>
-                        Allowance:{" "}
+                        Allowance:
                         {botDetails.currentSession?.allowance.toFixed(2)}%
                       </p>
                     )}
 
                   </dd>
+                  <dt className="text-sm font-medium text-black-500 flex">
+                    <CurrencyDollarIcon className="h-5 w-5 text-blue-500 mr-2" /> Manual Order
+                  </dt>
+                  <dd className="mt-1 ">
+
+                    <button type="button"
+                      onClick={() => onCreateOrder()}
+                      className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-500 bg-gray-300">
+
+                      <span>
+                        {botDetails.lastOrder?.orderSide == 1 ? (
+                          <>Sell</>
+                        ) : (
+                          <>
+                            Buy
+                          </>
+                        )}
+                      </span>
+                    </button>
+
+                  </dd>
+
                 </div>
-           
+
 
                 <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">Funds</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
+                  <dt className="text-sm font-medium text-black-500 flex"> <CubeIcon className="h-5 w-5 text-blue-500 mr-2" /> Funds</dt>
+                  <dd className="mt-1 text-sm text-black-900">
                     ${botDetails.funds}
                   </dd>
-                </div>
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">Actions</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    <div>
-                      <button type="button"
-                        onClick={() => { setShowModal(true) }}
-                        className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Edit</button>
-                      <button type="button"
-                        onClick={() => onCreateOrder()}
-                        className="mt-4 w-full rounded-md border border-transparent shadow-sm hover:bg-blue-500 bg-gray-300">Order</button>
-                    </div>
-                  </dd>
-                </div>
-                <div className="sm:col-span-1">
-                  <dt className="text-sm font-medium text-gray-500">
-                    Target Settings
+                  <dt className="text-sm font-medium text-black-500 flex">
+                    <MapIcon className="h-5 w-5 text-blue-500 mr-2" /> Target Settings
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900">
+                  <dd className="mt-1 text-sm text-black-900">
                     <p>
                       <span className="mr-2 font-medium text-black-500">
                         Sell:                      </span>
@@ -252,6 +260,18 @@ export default function TradeBotDetails() {
                     </p>
                   </dd>
                 </div>
+                <div className="sm:col-span-1">
+                  <dt className="text-sm font-medium text-gray-500">Actions</dt>
+                  <dd className="mt-1 text-sm text-gray-900">
+                    <div>
+                      <button type="button"
+                        onClick={() => { setShowModal(true) }}
+                        className="w-full rounded-md border border-transparent shadow-sm hover:bg-blue-700 bg-blue-500">Edit</button>
+
+                    </div>
+                  </dd>
+                </div>
+
                 <div className="sm:col-span-6">
                   <dt className="text-sm font-medium text-gray-500">Orders</dt>
                   <dd className="mt-1 text-sm text-gray-900">
@@ -379,14 +399,14 @@ export default function TradeBotDetails() {
               </dl>
             </section>
             {showChart && (<>
-              <div  style={{height: "90vh"}}>
+              <div style={{ height: "90vh" }}>
 
-            <AdvancedRealTimeChart autosize studies={studies} theme="dark"  symbol={botDetails.productTicker}></AdvancedRealTimeChart>
+                <AdvancedRealTimeChart autosize studies={studies} theme="dark" symbol={botDetails.productTicker}></AdvancedRealTimeChart>
 
-            </div>
+              </div>
 
             </>)}
-          
+
           </div>
           {/* <div className="grid grid-cols-2">
             <div className="">

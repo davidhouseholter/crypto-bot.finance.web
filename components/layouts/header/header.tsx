@@ -10,6 +10,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { createLogoutHandler } from "../../../pkg";
 import { useSelector } from "react-redux";
+import Image from 'next/image';
+import logoImage from '../../../public/logo-header.png';
 
 let navigation = [
   { name: "Home", href: "/", slug: "", current: false },
@@ -36,7 +38,6 @@ export default function Header() {
           slug: "trade-bots",
           current: false,
         },
-  
         { name: "Contact", href: "/contact", slug: "", current: false },
       ];
     }
@@ -55,7 +56,7 @@ export default function Header() {
     nav.current = true;
   }
   return (
-    <Disclosure as="nav" className="bg-brand-primary">
+    <Disclosure as="nav" className="bg-slate-100" id="nav">
       {({ open }) => (
         <>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,11 +74,12 @@ export default function Header() {
                   </Disclosure.Button>
                 </div>
                 <div className="flex-shrink-0 flex items-center">
-                  {/* <img
-                    className="block lg:hidden h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-                    alt="Workflow"
-                  />
+               <Link href="/" >
+               <Image style={{width: '200px'}} height="64px" className="w-200 cursor-pointer	" src={logoImage} alt="" priority />
+
+               </Link>
+            
+                  {/* 
                   <img
                     className="hidden lg:block h-8 w-auto"
                     src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
@@ -159,7 +161,7 @@ export default function Header() {
                       </Menu.Item> */}
                             <Menu.Item>
                               {({ active }) => (
-                                <Link href="profile">
+                                <Link href="/profile">
                                   <a
                                     className={classNames(
                                       active ? "bg-gray-100" : "",

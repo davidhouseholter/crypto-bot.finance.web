@@ -20,7 +20,8 @@ import { changeUserIdentityState } from "../pkg/redux/reducers/userIdentityState
 import ory from "../pkg/sdk";
 import { getUseProfile } from "../pkg/services/userService";
 import { Values } from "./login";
-
+import artImage from "../public/og_logo.png";
+import Image from "next/image";
 // Renders the registration page
 export function Registration() {
   const dispatch = useDispatch();
@@ -313,9 +314,9 @@ export function Registration() {
               </div>
             </div>
             <div className="hidden lg:block relative w-0 flex-1">
-              <img
+              <Image
                 className="absolute inset-0 h-full w-full object-cover"
-                src="https://images.unsplash.com/photo-1505904267569-f02eaeb45a4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
+                src={artImage}
                 alt=""
               />
             </div>
