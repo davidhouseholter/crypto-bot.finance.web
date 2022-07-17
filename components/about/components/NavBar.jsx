@@ -9,7 +9,7 @@ const sections = [
   { id: 'features', title: 'Features' },
   { id: 'get-started', title: 'Get Started' },
   { id: 'pricing', title: 'Pricing' },
-  { id: 'faq', title: 'Frequently asked questions' },
+  // { id: 'faq', title: 'Frequently asked questions' },
 
 ]
 
