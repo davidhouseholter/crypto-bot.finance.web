@@ -39,6 +39,7 @@ export default function Header() {
           current: false,
         },
         { name: "Contact", href: "/contact", slug: "", current: false },
+        { name: "About", href: "/about", slug: "", current: false },
       ];
     }
 

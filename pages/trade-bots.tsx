@@ -14,7 +14,7 @@ export default function TradeBotsPage() {
   const { user, tradeBots } = useAuth();
   const [editTradeBot, setEditTradeBot] = useState<any>(null);
 
-  const userProfile = useSelector((state: any) => state.userProfileMode.value);
+  //const user = useSelector((state: any) => state.userMode.value);
 
   const [showModal, setShowModal] = useState(false);
   const [showAddWalletModal, setShowAddWalletModal] = useState(false);
@@ -37,14 +37,14 @@ export default function TradeBotsPage() {
   const addTradeBot = () => {
     setEditTradeBot(null)
     setTradeWalletData(null)
-    if (userProfile.wallets.length == 0) {
+    if (user.wallets.length == 0) {
       setShowAddWalletModal(true);
     } else {
       setShowModal(true);
     }
   };
 
-  return userProfile && (
+  return user && (
     <div className="px-4 sm:px-6 lg:px-8 mt-4">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
@@ -65,7 +65,7 @@ export default function TradeBotsPage() {
               <>
                 <AddTradeBotModal
                   setShowModal={onAddTradeBot}
-                  wallets={userProfile.wallets}
+                  wallets={user.wallets}
                   tradeWalletData={tradeWalletData}
                   editTradeBot={editTradeBot}
                 />
@@ -73,7 +73,7 @@ export default function TradeBotsPage() {
             ) : null}
             {showAddWalletModal ? (
               <>
-                <AddTradeWalletModal setShowModal={addTradeWallet} wallets={userProfile.wallets} />
+                <AddTradeWalletModal setShowModal={addTradeWallet} wallets={user.wallets} />
               </>
             ) : null}
           </>
