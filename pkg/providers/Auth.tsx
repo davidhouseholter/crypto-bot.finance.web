@@ -11,13 +11,16 @@ export interface AuthContext {
     setUser: (p: any | undefined) => void;
     tradeBots: any[];
     setTradeBots: (p: any | undefined) => void;
-
+    coins: any[];
+    setCoins: (p: any | undefined) => void;
 }
 
 // Provider hook that creates auth object and handles state
 export function useProvideAuth(): AuthContext {
     const [user, setUser] = useState<any | undefined>({ name: "adfds" });
     const [tradeBots, setTradeBots] = useState<any[]>([]);
+    const [coins, setCoins] = useState<any[]>([]);
+
     const userProfile = useSelector((state: any) => state.userProfileMode.value);
     const [connection, setConnection] = useState<any | null>(null);
     const tradeBotsRef = useRef<any[]>([]);
@@ -65,6 +68,7 @@ export function useProvideAuth(): AuthContext {
                         }
                     });
                     connection.on('TradeBotOrderUpdate', message => {
+                        console.log('TradeBotOrderUpdate', message)
                         const tradeBotIdx = tradeBotsRef.current.findIndex(
                             (i) => message.lastOrder.tradeBotId == i.id
                         );
@@ -109,7 +113,9 @@ export function useProvideAuth(): AuthContext {
         user,
         setUser,
         tradeBots,
-        setTradeBots
+        setTradeBots,
+        coins,
+        setCoins
     };
 }
 

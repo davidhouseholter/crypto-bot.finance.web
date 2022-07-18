@@ -9,7 +9,6 @@ import { BeakerIcon, CurrencyDollarIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import { useAuth } from "../pkg/providers/Auth";
 
-let init = false;
 export default function TradeBotsPage() {
   const { user, tradeBots } = useAuth();
   const [editTradeBot, setEditTradeBot] = useState<any>(null);
@@ -37,7 +36,6 @@ export default function TradeBotsPage() {
   const addTradeBot = () => {
     setEditTradeBot(null)
     setTradeWalletData(null)
-    console.log(user);
     if (user.wallets.length == 0) {
       setShowAddWalletModal(true);
     } else {
@@ -272,7 +270,7 @@ export default function TradeBotsPage() {
                         </>)}
                       </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <p>{new Date(bot.lastOrder?.marketOrderCreatedAt).toLocaleString()}</p>
+                        <p>{bot.lastOrder && new Date(bot.lastOrder?.dateCreated).toLocaleString()}</p>
                       </td>
 
                       {/* <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">

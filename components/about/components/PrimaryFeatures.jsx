@@ -8,6 +8,7 @@ import screenshotDashboard from '../../../public/about/screenshots/App-Dashboard
 import screenshotTradeBotList from '../../../public/about/screenshots/App-TradeBot-List.png'
 import screenshotReporting from '../../../public/about/screenshots/reporting.png'
 import screenshotTradeBotDetails from '../../../public/about/screenshots/App-TradeBot-Details.png'
+import screenshotAddNewBot from '../../../public/about/screenshots/App-AddNewBot.png'
 
 const features = [
 
@@ -16,6 +17,12 @@ const features = [
     description:
       "All of your activity is organized into one place, giving you a top down view in your trade bot profits and activity.",
     image: screenshotDashboard,
+  },
+  {
+    title: 'How It Works',
+    description:
+      'You connect your exchange account to CryptoBot, and created bots to buy and sell based on target gains, CryptoBot automatically carries out that order in your exchange account. ',
+    image: screenshotAddNewBot,
   },
   {
     title: 'Multiple Assets',
@@ -29,12 +36,7 @@ const features = [
       "Keep track the exact details",
     image: screenshotTradeBotDetails,
   },
-  // {
-  //   title: 'How It Works',
-  //   description:
-  //     'You connect your exchange account to CryptoBot, and created bots to buy and sell based on target gains, CryptoBot automatically carries out that order in your exchange account. ',
-  //   image: screenshotReporting,
-  // },
+
 ]
 
 export function PrimaryFeatures() {
