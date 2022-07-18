@@ -37,6 +37,7 @@ export default function TradeBotsPage() {
   const addTradeBot = () => {
     setEditTradeBot(null)
     setTradeWalletData(null)
+    console.log(user);
     if (user.wallets.length == 0) {
       setShowAddWalletModal(true);
     } else {

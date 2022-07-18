@@ -5,6 +5,7 @@ import { getUseProfile } from "../pkg/services/userService";
 import { changeUserIdentityState } from "../pkg/redux/reducers/userIdentityState";
 import { changeUserProfileState } from "../pkg/redux/reducers/userProfileState";
 import { HubConnectionState } from "@microsoft/signalr";
+import { useAuth } from "../pkg/providers/Auth";
 
 const AppContext = createContext<any>({
   hasSession: false,
@@ -26,7 +27,7 @@ export function AppWrapper({ children }: AppWrapperProps): JSX.Element {
     lastCheck: null,
   });
   const [userProfile, setUserProfile] = useState<any>(null);
-
+  const {user, setUser} = useAuth();
   const canUseDOM = !!(
     typeof window !== "undefined" &&
     window.document &&
@@ -63,12 +64,14 @@ export function AppWrapper({ children }: AppWrapperProps): JSX.Element {
 
       getUseProfile().then((profile: any) => {
         setUserProfile(profile);
+        setUser(profile);
         dispatch(changeUserProfileState(profile));
       });
     }
     if (userStoreIdentity?.hasSession && !userProfile) {
       getUseProfile().then((profile: any) => {
         setUserProfile(profile);
+        setUser(profile);
         dispatch(changeUserProfileState(profile));
       });
     }
