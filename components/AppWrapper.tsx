@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUseProfile } from "../pkg/services/userService";
 import { changeUserIdentityState } from "../pkg/redux/reducers/userIdentityState";
 import { changeUserProfileState } from "../pkg/redux/reducers/userProfileState";
-import { HubConnectionState } from "@microsoft/signalr";
 import { useAuth } from "../pkg/providers/Auth";
 
 const AppContext = createContext<any>({
