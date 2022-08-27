@@ -28,7 +28,7 @@ export default class Connector {
       .build();
 
     this.connection.start().then(() => { }).catch(err => console.log(err));
-
+    this.connection.onclose((e) => {console.log(e)})
     this.connection.on("AccountNotification", (data: any) => {
       const dispatch = useDispatch();
       const update = {event:"AccountNotification", data:data}

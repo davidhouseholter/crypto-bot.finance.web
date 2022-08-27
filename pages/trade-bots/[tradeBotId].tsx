@@ -46,7 +46,7 @@ export default function TradeBotDetails() {
     if (tradeBotId == 0) {
       return;
     }
-    const botMatchDetails = tradeBots.find(i => i.id == tradeBotId);
+    const botMatchDetails = tradeBots?.find(i => i.id == tradeBotId);
     if (botMatchDetails) {
       setBotDetails(botMatchDetails);
       fetchTradeBotOrderData();
