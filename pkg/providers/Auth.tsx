@@ -25,15 +25,15 @@ export function useProvideAuth(): AuthContext {
     const [connection, setConnection] = useState<any | null>(null);
     const tradeBotsRef = useRef<any[]>([]);
     tradeBotsRef.current = tradeBots;
-
+    // {
+    //     skipNegotiation: true,
+    //     transport: HttpTransportType.WebSockets,
+    // }
     const dispatch = useDispatch();
     useEffect(() => {
         const connection = new HubConnectionBuilder()
-            .configureLogging(LogLevel.Error)
-            .withUrl(`${api}/hub/user`, {
-                skipNegotiation: true,
-                transport: HttpTransportType.WebSockets,
-            })
+            .configureLogging(LogLevel.Information)
+            .withUrl(`${api}/hub/user`)
             .withAutomaticReconnect()
             .build();
         setConnection(connection);
