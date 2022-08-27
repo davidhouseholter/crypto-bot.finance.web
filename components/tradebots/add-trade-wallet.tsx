@@ -29,13 +29,22 @@ export class TradeWalletViewModel {
 }
 export enum WalletConfigExchangeType {
   None = -1,
-  ApiKey,
+  CoinbasePro,
   TestBot,
+  Kraken
 }
+export class ActiveExchangeViewModel {
+  id!: number;
+  name!: string;
+  imageUrl!: string;
+  exchangeType!: WalletConfigExchangeType;
+  disabled!: boolean;
+}
+
 export default function AddTradeWalletModal({ setShowModal, wallets }) {
   const open = true;
 
-  const [currentExchange, setCurrentExchange] = useState<any>(null);
+  const [currentExchange, setCurrentExchange] = useState<ActiveExchangeViewModel | null>(null);
   const [currentExchanges, setCurrentExchanges] = useState<any[]>();
 
   const [tradeWalletData, setTradeWalletData] = useState<TradeWalletViewModel>(
@@ -59,7 +68,7 @@ export default function AddTradeWalletModal({ setShowModal, wallets }) {
       id: 1,
       name: "Coinbase Pro",
       imageUrl: "",
-      exchangeType: WalletConfigExchangeType.ApiKey,
+      exchangeType: WalletConfigExchangeType.CoinbasePro,
       disabled: false
     },
     {
@@ -68,6 +77,13 @@ export default function AddTradeWalletModal({ setShowModal, wallets }) {
       imageUrl: "",
       exchangeType: WalletConfigExchangeType.TestBot,
       disabled: wallets.findIndex(i => i.exchangeType == WalletConfigExchangeType.TestBot) > -1
+    },
+    {
+      id: 3,
+      name: "Kraken",
+      imageUrl: "",
+      exchangeType: WalletConfigExchangeType.Kraken,
+      disabled: false
     },
   ]);
 
@@ -79,7 +95,10 @@ export default function AddTradeWalletModal({ setShowModal, wallets }) {
       config: newWallet.config
     });
 
+
     setTimeout(() => {
+      console.log(tradeWalletData,newWallet)
+
       addTradeWallet();
     }, 100);
   }
@@ -208,8 +227,12 @@ export default function AddTradeWalletModal({ setShowModal, wallets }) {
                             </div>
                           </div>
                           <div className="mt-4">
-                            {currentExchange.exchangeType ==
-                              WalletConfigExchangeType.ApiKey && (<APIKeyWalletForm onComplete={onComplete} />)}
+                            {(currentExchange.exchangeType ==
+                              WalletConfigExchangeType.CoinbasePro 
+                            || currentExchange.exchangeType ==
+                            WalletConfigExchangeType.Kraken 
+                              )
+                              && (<APIKeyWalletForm activeExchange={currentExchange}  onComplete={onComplete} />)}
                             {currentExchange.exchangeType ==
                               WalletConfigExchangeType.TestBot && (
                               <>

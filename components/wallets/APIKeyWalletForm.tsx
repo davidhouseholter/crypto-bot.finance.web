@@ -1,7 +1,12 @@
 import React, { Component, useState } from 'react'
-import { TradeWalletViewModel } from '../tradebots/add-trade-wallet';
+import { ActiveExchangeViewModel, TradeWalletViewModel, WalletConfigExchangeType } from '../tradebots/add-trade-wallet';
 
-export default function APIKeyWalletForm({onComplete}) {
+export interface APIKeyWalletFormProps {
+    onComplete: any;
+    activeExchange: ActiveExchangeViewModel;
+  }
+
+export default function APIKeyWalletForm({onComplete, activeExchange}: APIKeyWalletFormProps): JSX.Element {
     
     const [wallet, setWallet] = useState(new TradeWalletViewModel);
     const addTradeWallet = () => {
@@ -65,7 +70,9 @@ export default function APIKeyWalletForm({onComplete}) {
                     className="appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     placeholder="Secret"
                 />
-            </div> <div className="form-group mt-4">
+            </div>
+            {activeExchange.exchangeType != WalletConfigExchangeType.Kraken && (<>
+                <div className="form-group mt-4">
                 <label
                     htmlFor="passphrase"
                     className="block text-sm font-medium text-gray-700"
@@ -84,6 +91,7 @@ export default function APIKeyWalletForm({onComplete}) {
                     placeholder="Passphrase"
                 />
             </div>
+            </>)}
             <div className="mt-5 sm:mt-6">
             <button
                       className="bg-green-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
